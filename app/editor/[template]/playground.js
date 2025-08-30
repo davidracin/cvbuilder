@@ -1,10 +1,14 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
+import { exportCVToPDF } from "../../../lib/pdfExport";
+import ExportButton from "../../../components/ExportButton";
+import { useToast } from "../../../components/Toast";
 
 export default function EditorPage() {
   const params = useParams();
   const templateSlug = params.template;
+  const { addToast, ToastContainer } = useToast();
   
   // Default CV data structure
   const [cvData, setCvData] = useState({
@@ -132,11 +136,46 @@ export default function EditorPage() {
     });
   };
 
+  // Function to export CV to PDF
+  const handleExportToPDF = async (filename) => {
+    try {
+      const exportFilename = filename || `${cvData.personal.name.replace(/\s+/g, '_')}_CV.pdf`;
+      const success = await exportCVToPDF('cv-preview', exportFilename, {
+        scale: 2,
+        quality: 0.95,
+        backgroundColor: '#ffffff',
+        width: 210, // A4 width in mm
+        height: 297 // A4 height in mm
+      });
+      
+      if (success) {
+        addToast('CV bylo úspěšně exportováno do PDF!', 'success');
+        console.log('CV bylo úspěšně exportováno do PDF');
+      } else {
+        addToast('Nepodařilo se exportovat CV. Zkuste to prosím znovu.', 'error');
+      }
+      
+      return success;
+    } catch (error) {
+      console.error('Chyba při exportu:', error);
+      addToast('Došlo k chybě při exportu PDF. Zkuste to prosím znovu.', 'error');
+      return false;
+    }
+  };
+
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Sidebar for editing */}
       <div className="w-1/3 bg-sidebar text-sidebar-foreground overflow-y-auto p-4 border-r border-sidebar-border">
-        <h1 className="text-xl font-bold mb-4">Editor CV - {templateSlug}</h1>
+        <div className="mb-4">
+          <h1 className="text-xl font-bold mb-3">Editor CV - {templateSlug}</h1>
+          
+          {/* Export Button */}
+          <ExportButton 
+            onExport={handleExportToPDF}
+            filename={`${cvData.personal.name.replace(/\s+/g, '_')}_CV.pdf`}
+          />
+        </div>
         
         {/* Personal Information Section */}
         <div className="mb-6">
@@ -456,21 +495,43 @@ export default function EditorPage() {
 
       {/* Preview area */}
       <div className="w-2/3 overflow-y-auto p-6 bg-white flex flex-col items-center">
-        <div className="w-full max-w-3xl shadow-lg min-h-[500px] p-8 bg-white">
-          {/* Import the specific template based on the template slug */}
-          {templateSlug === "moderni" && <ModerniCVTemplate data={cvData} />}
-          {templateSlug === "klasicke" && <KlasickeTemplate data={cvData} />}
-          {templateSlug === "kreativni" && <KreativniTemplate data={cvData} />}
-          {templateSlug === "profesionalni" && <ProfesionalniTemplate data={cvData} />}
-          
-          {/* Fallback if template is not found */}
-          {!["moderni", "klasicke", "kreativni", "profesionalni"].includes(templateSlug) && (
-            <div className="flex flex-col items-center justify-center h-full">
-              <p className="text-gray-500">Šablona nebyla nalezena</p>
-            </div>
-          )}
+        <div 
+          className="w-full max-w-3xl shadow-lg min-h-[500px] p-8 bg-white"
+          style={{
+            backgroundColor: '#ffffff',
+            minWidth: '800px',
+            minHeight: '1000px',
+            border: '1px solid #e5e7eb',
+            position: 'relative'
+          }}
+        >
+          {/* CV Content - this is what gets exported */}
+          <div 
+            id="cv-preview"
+            style={{
+              backgroundColor: '#ffffff',
+              padding: '0',
+              margin: '0',
+              border: 'none',
+              boxShadow: 'none'
+            }}
+          >
+            {/* Import the specific template based on the template slug */}
+            {templateSlug === "moderni" && <ModerniCVTemplate data={cvData} />}
+            {templateSlug === "klasicke" && <KlasickeTemplate data={cvData} />}
+            {templateSlug === "kreativni" && <KreativniTemplate data={cvData} />}
+            {templateSlug === "profesionalni" && <ProfesionalniTemplate data={cvData} />}
+            
+            {/* Fallback if template is not found */}
+            {!["moderni", "klasicke", "kreativni", "profesionalni"].includes(templateSlug) && (
+              <div className="flex flex-col items-center justify-center h-full">
+                <p className="text-gray-500">Šablona nebyla nalezena</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 }
