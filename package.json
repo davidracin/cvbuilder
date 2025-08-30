@@ -1,7 +1,8 @@
 {
   "name": "cvbuilder",
   "version": "0.1.0",
-  "private": true,  "scripts": {
+  "private": true,
+  "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -15,9 +16,10 @@
     "docx": "^9.5.0",
     "file-saver": "^2.0.5",
     "html2canvas": "^1.4.1",
-    "jspdf": "^3.0.1",
+    "html2canvas-pro": "^1.5.11",
+    "jspdf": "^3.0.2",
     "lucide-react": "^0.477.0",
-    "next": "15.2.0",
+    "next": "^15.5.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwind-merge": "^3.0.2",

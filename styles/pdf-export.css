@@ -1,0 +1,219 @@
+/* PDF Export Optimized Styles */
+
+/* Reset styles for PDF export */
+@media print, screen {
+  .cv-export-container {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    
+    /* Force background colors to appear in print */
+    background-color: white !important;
+    color: black !important;
+    
+    /* Remove any transforms that might interfere */
+    transform: none !important;
+    
+    /* Ensure proper sizing */
+    width: 210mm !important;
+    min-height: 297mm !important;
+    max-width: 210mm !important;
+    
+    /* Page layout */
+    margin: 0 !important;
+    padding: 20mm !important;
+    box-sizing: border-box !important;
+    
+    /* Font optimization */
+    font-size: 12pt !important;
+    line-height: 1.4 !important;
+    font-family: Arial, sans-serif !important;
+  }
+
+  /* Convert OKLCH and modern colors to safe RGB equivalents */
+  .cv-export-container * {
+    /* Purple gradient -> solid purple */
+    background-image: none !important;
+    
+    /* Ensure all text is visible */
+    opacity: 1 !important;
+    
+    /* Convert any transparent or problematic colors */
+    color: inherit !important;
+  }
+
+  /* Specific color fixes for different templates */
+  .cv-export-container .text-purple-600,
+  .cv-export-container .bg-purple-600 {
+    color: #7c3aed !important;
+    background-color: #7c3aed !important;
+  }
+
+  .cv-export-container .text-blue-600,
+  .cv-export-container .bg-blue-600 {
+    color: #2563eb !important;
+    background-color: #2563eb !important;
+  }
+
+  .cv-export-container .text-gray-800,
+  .cv-export-container .bg-gray-800 {
+    color: #1f2937 !important;
+    background-color: #1f2937 !important;
+  }
+
+  .cv-export-container .text-white {
+    color: #ffffff !important;
+  }
+
+  /* Progress bars */
+  .cv-export-container .bg-purple-100 {
+    background-color: #ede9fe !important;
+  }
+
+  .cv-export-container .bg-gray-200 {
+    background-color: #e5e7eb !important;
+  }
+
+  .cv-export-container .bg-gray-600 {
+    background-color: #4b5563 !important;
+  }
+
+  /* Shadows - remove for PDF */
+  .cv-export-container .shadow-lg,
+  .cv-export-container .shadow-sm {
+    box-shadow: none !important;
+    border: 1px solid #e5e7eb !important;
+  }
+
+  /* Gradients - convert to solid colors */
+  .cv-export-container .bg-gradient-to-br,
+  .cv-export-container .bg-gradient-to-r {
+    background: #f8fafc !important; /* Light gray background */
+  }
+
+  .cv-export-container .bg-clip-text {
+    background-clip: unset !important;
+    -webkit-background-clip: unset !important;
+    color: #7c3aed !important;
+  }
+
+  /* Rounded corners - reduce for better printing */
+  .cv-export-container .rounded-lg {
+    border-radius: 4px !important;
+  }
+
+  .cv-export-container .rounded-full {
+    border-radius: 50% !important;
+  }
+
+  /* Spacing adjustments for PDF */
+  .cv-export-container .space-y-6 > * + * {
+    margin-top: 1.5rem !important;
+  }
+
+  .cv-export-container .space-y-3 > * + * {
+    margin-top: 0.75rem !important;
+  }
+
+  /* Text adjustments */
+  .cv-export-container h1 {
+    font-size: 18pt !important;
+    font-weight: bold !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .cv-export-container h2 {
+    font-size: 14pt !important;
+    font-weight: bold !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .cv-export-container h3 {
+    font-size: 12pt !important;
+    font-weight: bold !important;
+    margin-bottom: 0.25rem !important;
+  }
+
+  /* Page breaks */
+  .cv-export-container .page-break-before {
+    page-break-before: always !important;
+    break-before: page !important;
+  }
+
+  .cv-export-container .page-break-after {
+    page-break-after: always !important;
+    break-after: page !important;
+  }
+
+  .cv-export-container .page-break-inside-avoid {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Professional template specific fixes */
+  .cv-export-container .bg-gray-800 {
+    background-color: #1f2937 !important;
+    color: white !important;
+  }
+
+  .cv-export-container .text-gray-300 {
+    color: #d1d5db !important;
+  }
+
+  .cv-export-container .border-gray-600 {
+    border-color: #4b5563 !important;
+  }
+
+  /* Progress bar fixes */
+  .cv-export-container [style*="width:"] {
+    display: block !important;
+    height: 8px !important;
+  }
+
+  /* Flex layout fixes for PDF */
+  .cv-export-container .flex {
+    display: flex !important;
+  }
+
+  .cv-export-container .flex-wrap {
+    flex-wrap: wrap !important;
+  }
+
+  .cv-export-container .justify-between {
+    justify-content: space-between !important;
+  }
+
+  .cv-export-container .items-center {
+    align-items: center !important;
+  }
+
+  /* Grid layout fixes */
+  .cv-export-container .w-1\/2 {
+    width: 48% !important;
+    float: left !important;
+  }
+
+  .cv-export-container .w-1\/3 {
+    width: 30% !important;
+    float: left !important;
+  }
+
+  .cv-export-container .w-2\/3 {
+    width: 68% !important;
+    float: left !important;
+  }
+
+  /* Clear floats */
+  .cv-export-container::after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+
+/* Animation overrides for PDF export */
+@media print, screen {
+  .cv-export-container * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

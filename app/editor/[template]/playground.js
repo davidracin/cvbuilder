@@ -1,14 +1,14 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { exportToPDF, exportToImage, exportToWord } from "../../../lib/exportUtils";
+import { exportCVToPDF } from "../../../lib/pdfExport";
+import ExportButton from "../../../components/ExportButton";
+import { useToast } from "../../../components/Toast";
 
 export default function EditorPage() {
   const params = useParams();
   const templateSlug = params.template;
-  
-  // State for export dropdown
-  const [isExportDropdownOpen, setIsExportDropdownOpen] = useState(false);
+  const { addToast, ToastContainer } = useToast();
   
   // Default CV data structure
   const [cvData, setCvData] = useState({
@@ -19,40 +19,25 @@ export default function EditorPage() {
       phone: "+420 123 456 789",
       address: "Praha, Česká republika",
       about: "Krátké představení o vás a vašich zkušenostech.",
-    },    experience: [
+    },
+    experience: [
       {
         id: 1,
-        title: "Senior Software Developer a Team Lead",
-        company: "Technology Innovation Solutions International Corporation s.r.o.",
+        title: "Pracovní pozice",
+        company: "Společnost",
         startDate: "01/2020",
         endDate: "Současnost",
         description: "Popis vaší pracovní náplně a dosažených úspěchů."
-      },
-      {
-        id: 2,
-        title: "Frontend Developer",
-        company: "Velmi Dlouhý Název Společnosti Která Má Opravdu Dlouhý Název a.s.",
-        startDate: "06/2018",
-        endDate: "12/2019",
-        description: "Vývoj moderních webových aplikací s použitím React a TypeScript."
       }
     ],
     education: [
       {
         id: 1,
-        degree: "Magisterský titul v oboru Informatika",
-        school: "Univerzita Karlova v Praze, Fakulta matematiky a fyziky, Katedra softwarového inženýrství",
+        degree: "Dosažené vzdělání",
+        school: "Název školy",
         startDate: "09/2015",
         endDate: "06/2019",
         description: "Popis vašeho studia a případných úspěchů."
-      },
-      {
-        id: 2,
-        degree: "Bakalářský titul",
-        school: "Czech Technical University in Prague, Faculty of Information Technology and Computer Science",
-        startDate: "09/2012",
-        endDate: "06/2015",
-        description: "Studium základů informatiky a programování."
       }
     ],
     skills: [
@@ -140,6 +125,7 @@ export default function EditorPage() {
       };
     });
   };
+
   // Function to remove item from array sections
   const removeItem = (section, id) => {
     setCvData((prevData) => {
@@ -150,31 +136,30 @@ export default function EditorPage() {
     });
   };
 
-  // Function to handle export
-  const handleExport = async (format) => {
+  // Function to export CV to PDF
+  const handleExportToPDF = async (filename) => {
     try {
-      const fileName = `${cvData.personal.name.replace(/\s+/g, '_')}_CV`;
+      const exportFilename = filename || `${cvData.personal.name.replace(/\s+/g, '_')}_CV.pdf`;
+      const success = await exportCVToPDF('cv-preview', exportFilename, {
+        scale: 2,
+        quality: 0.95,
+        backgroundColor: '#ffffff',
+        width: 210, // A4 width in mm
+        height: 297 // A4 height in mm
+      });
       
-      switch (format) {
-        case 'pdf':
-          await exportToPDF('cv-template', fileName);
-          break;
-        case 'word':
-          await exportToWord(cvData, fileName);
-          break;
-        case 'image':
-          await exportToImage('cv-template', fileName);
-          break;
-        default:
-          throw new Error('Neplatný formát exportu');
+      if (success) {
+        addToast('CV bylo úspěšně exportováno do PDF!', 'success');
+        console.log('CV bylo úspěšně exportováno do PDF');
+      } else {
+        addToast('Nepodařilo se exportovat CV. Zkuste to prosím znovu.', 'error');
       }
       
-      // You could add a success notification here
-      console.log(`CV úspěšně exportováno jako ${format.toUpperCase()}`);
+      return success;
     } catch (error) {
-      console.error('Chyba při exportování CV:', error);
-      // You could add an error notification here
-      alert(`Chyba při exportování CV: ${error.message}`);
+      console.error('Chyba při exportu:', error);
+      addToast('Došlo k chybě při exportu PDF. Zkuste to prosím znovu.', 'error');
+      return false;
     }
   };
 
@@ -182,7 +167,15 @@ export default function EditorPage() {
     <div className="flex h-screen overflow-hidden">
       {/* Sidebar for editing */}
       <div className="w-1/3 bg-sidebar text-sidebar-foreground overflow-y-auto p-4 border-r border-sidebar-border">
-        <h1 className="text-xl font-bold mb-4">Editor CV - {templateSlug}</h1>
+        <div className="mb-4">
+          <h1 className="text-xl font-bold mb-3">Editor CV - {templateSlug}</h1>
+          
+          {/* Export Button */}
+          <ExportButton 
+            onExport={handleExportToPDF}
+            filename={`${cvData.personal.name.replace(/\s+/g, '_')}_CV.pdf`}
+          />
+        </div>
         
         {/* Personal Information Section */}
         <div className="mb-6">
@@ -498,118 +491,47 @@ export default function EditorPage() {
             </div>
           ))}
         </div>
-      </div>      {/* Preview area */}
+      </div>
+
+      {/* Preview area */}
       <div className="w-2/3 overflow-y-auto p-6 bg-white flex flex-col items-center">
-        <div id="cv-template" className="w-full max-w-3xl shadow-lg bg-transparent">
-          {/* Import the specific template based on the template slug */}
-          {templateSlug === "moderni" && <ModerniCVTemplate data={cvData} />}
-          {templateSlug === "klasicke" && <KlasickeTemplate data={cvData} />}
-          {templateSlug === "kreativni" && <KreativniTemplate data={cvData} />}
-          {templateSlug === "profesionalni" && <ProfesionalniTemplate data={cvData} />}
-          
-          {/* Fallback if template is not found */}
-          {!["moderni", "klasicke", "kreativni", "profesionalni"].includes(templateSlug) && (
-            <div className="flex flex-col items-center justify-center h-full">
-              <p className="text-gray-500">Šablona nebyla nalezena</p>
-            </div>
-          )}
-        </div>
-
-        {/* Export dropdown button */}
-        <div className="relative mt-6">
-          <button
-            onClick={() => setIsExportDropdownOpen(!isExportDropdownOpen)}
-            className="group bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium px-8 py-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl flex items-center gap-2"
+        <div 
+          className="w-full max-w-3xl shadow-lg min-h-[500px] p-8 bg-white"
+          style={{
+            backgroundColor: '#ffffff',
+            minWidth: '800px',
+            minHeight: '1000px',
+            border: '1px solid #e5e7eb',
+            position: 'relative'
+          }}
+        >
+          {/* CV Content - this is what gets exported */}
+          <div 
+            id="cv-preview"
+            style={{
+              backgroundColor: '#ffffff',
+              padding: '0',
+              margin: '0',
+              border: 'none',
+              boxShadow: 'none'
+            }}
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            Exportovat CV
-            <svg 
-              className={`w-4 h-4 transition-transform duration-200 ${isExportDropdownOpen ? 'rotate-180' : ''}`} 
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
-
-          {/* Dropdown menu */}
-          {isExportDropdownOpen && (
-            <>
-              {/* Backdrop */}
-              <div 
-                className="fixed inset-0 z-10" 
-                onClick={() => setIsExportDropdownOpen(false)}
-              ></div>
-              
-              {/* Dropdown content */}
-              <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-64 bg-white rounded-xl shadow-2xl border border-gray-100 z-20 overflow-hidden">
-                <div className="py-2">
-                  <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-100">
-                    Vyberte formát
-                  </div>
-                  
-                  <button
-                    onClick={() => {
-                      handleExport('pdf');
-                      setIsExportDropdownOpen(false);
-                    }}
-                    className="w-full px-4 py-3 text-left hover:bg-red-50 transition-colors duration-150 flex items-center gap-3 group"
-                  >
-                    <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center group-hover:bg-red-200 transition-colors">
-                      <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <div>
-                      <div className="font-medium text-gray-900">PDF</div>
-                      <div className="text-sm text-gray-500">Profesionální formát pro sdílení</div>
-                    </div>
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      handleExport('word');
-                      setIsExportDropdownOpen(false);
-                    }}
-                    className="w-full px-4 py-3 text-left hover:bg-blue-50 transition-colors duration-150 flex items-center gap-3 group"
-                  >
-                    <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
-                      <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm3 2h6v4H7V5zm8 8v2h1v-2h-1zm-2-2H7v4h6v-4z"/>
-                      </svg>
-                    </div>
-                    <div>
-                      <div className="font-medium text-gray-900">Word</div>
-                      <div className="text-sm text-gray-500">Editovatelný dokument (.docx)</div>
-                    </div>
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      handleExport('image');
-                      setIsExportDropdownOpen(false);
-                    }}
-                    className="w-full px-4 py-3 text-left hover:bg-green-50 transition-colors duration-150 flex items-center gap-3 group"
-                  >
-                    <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors">
-                      <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <div>
-                      <div className="font-medium text-gray-900">Obrázek</div>
-                      <div className="text-sm text-gray-500">PNG formát pro rychlé sdílení</div>
-                    </div>
-                  </button>
-                </div>
+            {/* Import the specific template based on the template slug */}
+            {templateSlug === "moderni" && <ModerniCVTemplate data={cvData} />}
+            {templateSlug === "klasicke" && <KlasickeTemplate data={cvData} />}
+            {templateSlug === "kreativni" && <KreativniTemplate data={cvData} />}
+            {templateSlug === "profesionalni" && <ProfesionalniTemplate data={cvData} />}
+            
+            {/* Fallback if template is not found */}
+            {!["moderni", "klasicke", "kreativni", "profesionalni"].includes(templateSlug) && (
+              <div className="flex flex-col items-center justify-center h-full">
+                <p className="text-gray-500">Šablona nebyla nalezena</p>
               </div>
-            </>
-          )}
+            )}
+          </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 }
@@ -617,7 +539,7 @@ export default function EditorPage() {
 // Moderní CV Template Component
 function ModerniCVTemplate({ data }) {
   return (
-    <div className="font-sans p-8 bg-white min-h-[500px]">
+    <div className="font-sans">
       <header className="mb-8">
         <h1 className="text-3xl font-bold text-blue-600">{data.personal.name}</h1>
         <p className="text-xl text-gray-600">{data.personal.title}</p>
@@ -635,16 +557,17 @@ function ModerniCVTemplate({ data }) {
         <h2 className="text-xl font-semibold border-b border-gray-200 pb-1 mb-3">O mně</h2>
         <p className="text-gray-700">{data.personal.about}</p>
       </section>
-        <section className="mb-6">
+      
+      <section className="mb-6">
         <h2 className="text-xl font-semibold border-b border-gray-200 pb-1 mb-3">Pracovní zkušenosti</h2>
         {data.experience.map((exp) => (
           <div key={exp.id} className="mb-4">
-            <div className="flex justify-between flex-wrap">
-              <h3 className="font-medium text-lg break-words">{exp.title}</h3>
-              <span className="text-gray-500 text-sm whitespace-nowrap">{exp.startDate} - {exp.endDate}</span>
+            <div className="flex justify-between">
+              <h3 className="font-medium text-lg">{exp.title}</h3>
+              <span className="text-gray-500 text-sm">{exp.startDate} - {exp.endDate}</span>
             </div>
-            <div className="text-gray-600 font-medium break-words">{exp.company}</div>
-            <p className="text-gray-700 mt-1 break-words">{exp.description}</p>
+            <div className="text-gray-600 font-medium">{exp.company}</div>
+            <p className="text-gray-700 mt-1">{exp.description}</p>
           </div>
         ))}
       </section>
@@ -653,12 +576,12 @@ function ModerniCVTemplate({ data }) {
         <h2 className="text-xl font-semibold border-b border-gray-200 pb-1 mb-3">Vzdělání</h2>
         {data.education.map((edu) => (
           <div key={edu.id} className="mb-4">
-            <div className="flex justify-between flex-wrap">
-              <h3 className="font-medium text-lg break-words">{edu.degree}</h3>
-              <span className="text-gray-500 text-sm whitespace-nowrap">{edu.startDate} - {edu.endDate}</span>
+            <div className="flex justify-between">
+              <h3 className="font-medium text-lg">{edu.degree}</h3>
+              <span className="text-gray-500 text-sm">{edu.startDate} - {edu.endDate}</span>
             </div>
-            <div className="text-gray-600 font-medium break-words">{edu.school}</div>
-            <p className="text-gray-700 mt-1 break-words">{edu.description}</p>
+            <div className="text-gray-600 font-medium">{edu.school}</div>
+            <p className="text-gray-700 mt-1">{edu.description}</p>
           </div>
         ))}
       </section>
@@ -701,7 +624,7 @@ function ModerniCVTemplate({ data }) {
 // Classic CV Template Component
 function KlasickeTemplate({ data }) {
   return (
-    <div className="font-serif p-8 bg-white min-h-[500px]">
+    <div className="font-serif">
       <header className="text-center mb-8">
         <h1 className="text-3xl font-bold">{data.personal.name}</h1>
         <p className="text-xl mt-1">{data.personal.title}</p>
@@ -720,14 +643,14 @@ function KlasickeTemplate({ data }) {
       </section>
       
       <hr className="my-4 border-gray-300" />
-        <section className="mb-6">
+      
+      <section className="mb-6">
         <h2 className="text-xl font-bold uppercase tracking-wider mb-3">Pracovní zkušenosti</h2>
         {data.experience.map((exp) => (
           <div key={exp.id} className="mb-4">
-            <div className="font-bold break-words">{exp.title}</div>
-            <div className="text-gray-700 font-medium break-words">{exp.company}</div>
+            <div className="font-bold">{exp.title}, {exp.company}</div>
             <div className="text-gray-600 italic">{exp.startDate} - {exp.endDate}</div>
-            <p className="mt-1 break-words">{exp.description}</p>
+            <p className="mt-1">{exp.description}</p>
           </div>
         ))}
       </section>
@@ -738,10 +661,9 @@ function KlasickeTemplate({ data }) {
         <h2 className="text-xl font-bold uppercase tracking-wider mb-3">Vzdělání</h2>
         {data.education.map((edu) => (
           <div key={edu.id} className="mb-4">
-            <div className="font-bold break-words">{edu.degree}</div>
-            <div className="text-gray-700 font-medium break-words">{edu.school}</div>
+            <div className="font-bold">{edu.degree}, {edu.school}</div>
             <div className="text-gray-600 italic">{edu.startDate} - {edu.endDate}</div>
-            <p className="mt-1 break-words">{edu.description}</p>
+            <p className="mt-1">{edu.description}</p>
           </div>
         ))}
       </section>
@@ -778,10 +700,10 @@ function KlasickeTemplate({ data }) {
 // Kreativní CV Template Component
 function KreativniTemplate({ data }) {
   return (
-    <div className="font-sans bg-gradient-to-br from-purple-50 to-blue-50 p-6 rounded-lg min-h-[500px]">
+    <div className="font-sans bg-gradient-to-br from-purple-50 to-blue-50 p-6 rounded-lg">
       <header className="flex flex-wrap items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-purple-600">
+          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-blue-600">
             {data.personal.name}
           </h1>
           <p className="text-lg text-gray-600 mt-1">{data.personal.title}</p>
@@ -821,14 +743,16 @@ function KreativniTemplate({ data }) {
           </span>
           Pracovní zkušenosti
         </h2>
-          <div className="space-y-6">
-          {data.experience.map((exp) => (            <div key={exp.id} className="p-5 bg-white rounded-lg shadow-sm">
-              <div className="mb-2">
-                <h3 className="font-bold text-lg text-gray-800 break-words">{exp.title}</h3>
-                <span className="text-purple-500 font-medium text-sm">{exp.startDate} - {exp.endDate}</span>
+        
+        <div className="space-y-6">
+          {data.experience.map((exp) => (
+            <div key={exp.id} className="p-5 bg-white rounded-lg shadow-sm">
+              <div className="flex justify-between flex-wrap">
+                <h3 className="font-bold text-lg text-gray-800">{exp.title}</h3>
+                <span className="text-purple-500 font-medium">{exp.startDate} - {exp.endDate}</span>
               </div>
-              <div className="text-purple-600 font-medium break-words mb-1">{exp.company}</div>
-              <p className="text-gray-600 mt-2 break-words">{exp.description}</p>
+              <div className="text-purple-600 font-medium">{exp.company}</div>
+              <p className="text-gray-600 mt-2">{exp.description}</p>
             </div>
           ))}
         </div>
@@ -841,14 +765,16 @@ function KreativniTemplate({ data }) {
           </span>
           Vzdělání
         </h2>
-          <div className="space-y-6">
-          {data.education.map((edu) => (            <div key={edu.id} className="p-5 bg-white rounded-lg shadow-sm">
-              <div className="mb-2">
-                <h3 className="font-bold text-lg text-gray-800 break-words">{edu.degree}</h3>
-                <span className="text-purple-500 font-medium text-sm">{edu.startDate} - {edu.endDate}</span>
+        
+        <div className="space-y-6">
+          {data.education.map((edu) => (
+            <div key={edu.id} className="p-5 bg-white rounded-lg shadow-sm">
+              <div className="flex justify-between flex-wrap">
+                <h3 className="font-bold text-lg text-gray-800">{edu.degree}</h3>
+                <span className="text-purple-500 font-medium">{edu.startDate} - {edu.endDate}</span>
               </div>
-              <div className="text-purple-600 font-medium break-words mb-1">{edu.school}</div>
-              <p className="text-gray-600 mt-2 break-words">{edu.description}</p>
+              <div className="text-purple-600 font-medium">{edu.school}</div>
+              <p className="text-gray-600 mt-2">{edu.description}</p>
             </div>
           ))}
         </div>
@@ -907,7 +833,7 @@ function KreativniTemplate({ data }) {
 // Profesionální CV Template Component
 function ProfesionalniTemplate({ data }) {
   return (
-    <div className="font-sans bg-white min-h-[500px]">
+    <div className="font-sans">
       <div className="flex flex-wrap">
         {/* Left sidebar */}
         <div className="w-1/3 bg-gray-800 text-white p-6 min-h-[750px]">
@@ -959,32 +885,35 @@ function ProfesionalniTemplate({ data }) {
             <h2 className="text-2xl font-bold text-gray-800 mb-4">O mně</h2>
             <p className="text-gray-700 leading-relaxed">{data.personal.about}</p>
           </section>
-            <section className="mb-8">
+          
+          <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">Pracovní zkušenosti</h2>
-            {data.experience.map((exp) => (              <div key={exp.id} className="mb-6">
-                <div className="mb-2">
-                  <h3 className="font-bold text-lg text-gray-800 break-words">{exp.title}</h3>
+            {data.experience.map((exp) => (
+              <div key={exp.id} className="mb-6">
+                <div className="flex justify-between items-start mb-1">
+                  <h3 className="font-bold text-lg text-gray-800">{exp.title}</h3>
                   <span className="text-gray-500 text-sm bg-gray-100 px-2 py-1 rounded">
                     {exp.startDate} - {exp.endDate}
                   </span>
                 </div>
-                <div className="text-gray-600 font-medium mb-2 break-words">{exp.company}</div>
-                <p className="text-gray-600 break-words">{exp.description}</p>
+                <div className="text-gray-600 font-medium mb-2">{exp.company}</div>
+                <p className="text-gray-600">{exp.description}</p>
               </div>
             ))}
           </section>
           
           <section>
             <h2 className="text-2xl font-bold text-gray-800 mb-4">Vzdělání</h2>
-            {data.education.map((edu) => (              <div key={edu.id} className="mb-6">
-                <div className="mb-2">
-                  <h3 className="font-bold text-lg text-gray-800 break-words">{edu.degree}</h3>
+            {data.education.map((edu) => (
+              <div key={edu.id} className="mb-6">
+                <div className="flex justify-between items-start mb-1">
+                  <h3 className="font-bold text-lg text-gray-800">{edu.degree}</h3>
                   <span className="text-gray-500 text-sm bg-gray-100 px-2 py-1 rounded">
                     {edu.startDate} - {edu.endDate}
                   </span>
                 </div>
-                <div className="text-gray-600 font-medium mb-2 break-words">{edu.school}</div>
-                <p className="text-gray-600 break-words">{edu.description}</p>
+                <div className="text-gray-600 font-medium mb-2">{edu.school}</div>
+                <p className="text-gray-600">{edu.description}</p>
               </div>
             ))}
           </section>
