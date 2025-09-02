@@ -19,6 +19,7 @@ export default function EditorPage() {
       phone: "+420 123 456 789",
       address: "Praha, Česká republika",
       about: "Krátké představení o vás a vašich zkušenostech.",
+      dateOfBirth: "01.01.1990",
     },
     experience: [
       {
@@ -41,9 +42,9 @@ export default function EditorPage() {
       }
     ],
     skills: [
-      { id: 1, name: "Dovednost 1", level: 80 },
-      { id: 2, name: "Dovednost 2", level: 70 },
-      { id: 3, name: "Dovednost 3", level: 90 }
+      { id: 1, name: "Dovednost 1" },
+      { id: 2, name: "Dovednost 2" },
+      { id: 3, name: "Dovednost 3" }
     ],
     languages: [
       { id: 1, name: "Čeština", level: "Rodilý mluvčí" },
@@ -108,8 +109,7 @@ export default function EditorPage() {
       } else if (section === "skills") {
         newItem = {
           ...newItem,
-          name: "Nová dovednost",
-          level: 50
+          name: "Nová dovednost"
         };
       } else if (section === "languages") {
         newItem = {
@@ -238,6 +238,17 @@ export default function EditorPage() {
                 className="w-full p-2 border rounded bg-sidebar-accent text-sidebar-accent-foreground min-h-[100px]"
                 value={cvData.personal.about}
                 onChange={(e) => updateCvData("personal", "about", e.target.value)}
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-1">Datum narození</label>
+              <input 
+                type="text" 
+                className="w-full p-2 border rounded bg-sidebar-accent text-sidebar-accent-foreground"
+                value={cvData.personal.dateOfBirth}
+                onChange={(e) => updateCvData("personal", "dateOfBirth", e.target.value)}
+                placeholder="DD.MM.YYYY"
               />
             </div>
           </div>
@@ -432,18 +443,6 @@ export default function EditorPage() {
                   X
                 </button>
               </div>
-              
-              <div className="flex items-center">
-                <input 
-                  type="range" 
-                  min="0" 
-                  max="100" 
-                  className="w-full mr-2"
-                  value={skill.level}
-                  onChange={(e) => updateCvData("skills", "level", parseInt(e.target.value), skill.id)}
-                />
-                <span className="w-8 text-center">{skill.level}%</span>
-              </div>
             </div>
           ))}
         </div>
@@ -589,20 +588,13 @@ function ModerniCVTemplate({ data }) {
       <div className="flex flex-wrap">
         <section className="w-1/2 pr-4 mb-6">
           <h2 className="text-xl font-semibold border-b border-gray-200 pb-1 mb-3">Dovednosti</h2>
-          {data.skills.map((skill) => (
-            <div key={skill.id} className="mb-2">
-              <div className="flex justify-between mb-1">
+          <ul className="list-disc pl-5">
+            {data.skills.map((skill) => (
+              <li key={skill.id} className="mb-1">
                 <span className="text-gray-700">{skill.name}</span>
-                <span className="text-gray-500 text-sm">{skill.level}%</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div 
-                  className="bg-blue-600 h-2 rounded-full" 
-                  style={{ width: `${skill.level}%` }}
-                ></div>
-              </div>
-            </div>
-          ))}
+              </li>
+            ))}
+          </ul>
         </section>
         
         <section className="w-1/2 pl-4 mb-6">
@@ -632,28 +624,11 @@ function KlasickeTemplate({ data }) {
         <div className="mt-3 text-sm text-gray-600">
           <div>{data.personal.email} | {data.personal.phone}</div>
           <div>{data.personal.address}</div>
+          {data.personal.dateOfBirth && (
+            <div>Datum narození: {data.personal.dateOfBirth}</div>
+          )}
         </div>
       </header>
-      
-      <hr className="my-4 border-gray-300" />
-      
-      <section className="mb-6">
-        <h2 className="text-xl font-bold uppercase tracking-wider mb-3">Profil</h2>
-        <p className="text-gray-700">{data.personal.about}</p>
-      </section>
-      
-      <hr className="my-4 border-gray-300" />
-      
-      <section className="mb-6">
-        <h2 className="text-xl font-bold uppercase tracking-wider mb-3">Pracovní zkušenosti</h2>
-        {data.experience.map((exp) => (
-          <div key={exp.id} className="mb-4">
-            <div className="font-bold">{exp.title}, {exp.company}</div>
-            <div className="text-gray-600 italic">{exp.startDate} - {exp.endDate}</div>
-            <p className="mt-1">{exp.description}</p>
-          </div>
-        ))}
-      </section>
       
       <hr className="my-4 border-gray-300" />
       
@@ -693,6 +668,19 @@ function KlasickeTemplate({ data }) {
           </ul>
         </section>
       </div>
+      
+      <hr className="my-4 border-gray-300" />
+      
+      <section className="mb-6">
+        <h2 className="text-xl font-bold uppercase tracking-wider mb-3">Pracovní zkušenosti</h2>
+        {data.experience.map((exp) => (
+          <div key={exp.id} className="mb-4">
+            <div className="font-bold">{exp.title}, {exp.company}</div>
+            <div className="text-gray-600 italic">{exp.startDate} - {exp.endDate}</div>
+            <p className="mt-1">{exp.description}</p>
+          </div>
+        ))}
+      </section>
     </div>
   );
 }
@@ -790,20 +778,13 @@ function KreativniTemplate({ data }) {
           </h2>
           
           <div className="p-5 bg-white rounded-lg shadow-sm">
-            {data.skills.map((skill) => (
-              <div key={skill.id} className="mb-3">
-                <div className="flex justify-between mb-1">
+            <ul className="list-disc pl-5">
+              {data.skills.map((skill) => (
+                <li key={skill.id} className="mb-2">
                   <span className="font-medium">{skill.name}</span>
-                  <span className="text-purple-500">{skill.level}%</span>
-                </div>
-                <div className="w-full h-2 bg-purple-100 rounded-full">
-                  <div 
-                    className="h-2 rounded-full bg-gradient-to-r from-purple-500 to-blue-500" 
-                    style={{ width: `${skill.level}%` }}
-                  ></div>
-                </div>
-              </div>
-            ))}
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
         
@@ -853,19 +834,13 @@ function ProfesionalniTemplate({ data }) {
           
           <div className="mb-8">
             <h2 className="text-lg font-semibold border-b border-gray-600 pb-2 mb-3">Dovednosti</h2>
-            {data.skills.map((skill) => (
-              <div key={skill.id} className="mb-3">
-                <div className="flex justify-between mb-1">
+            <ul className="list-disc pl-3">
+              {data.skills.map((skill) => (
+                <li key={skill.id} className="mb-2">
                   <span>{skill.name}</span>
-                </div>
-                <div className="w-full bg-gray-600 rounded-full h-1.5">
-                  <div 
-                    className="bg-white h-1.5 rounded-full" 
-                    style={{ width: `${skill.level}%` }}
-                  ></div>
-                </div>
-              </div>
-            ))}
+                </li>
+              ))}
+            </ul>
           </div>
           
           <div>
