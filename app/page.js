@@ -64,6 +64,21 @@ export default function Home() {
       <footer className="mt-16 text-center text-gray-500 dark:text-gray-400 text-sm">
         <p>CV Builder &copy; {new Date().getFullYear()}</p>
       </footer>
+
+      {/* Added simple buttons to get to login and signup pages and test them */}    
+      <button
+          onClick={() => router.push('/login')}
+          className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors"
+        >
+          Přihlásit se
+        </button>
+        <button
+          onClick={() => router.push('/signup')}
+          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors shadow-md"
+        >
+          Registrovat se
+        </button>
+
     </div>
   );
 }
