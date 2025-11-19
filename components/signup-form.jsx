@@ -10,10 +10,10 @@ import {
   FieldDescription,
   FieldGroup,
   FieldLabel,
-  FieldSeparator,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { signUp } from "@/lib/firebaseAuth"
+import { signUp, auth } from "@/lib/firebaseAuth"
+import { validatePassword } from "firebase/auth"
 
 export function SignupForm({
   className,
@@ -36,10 +36,31 @@ export function SignupForm({
       return;
     }
 
-    // Validate password length
-    if (password.length < 8) {
-      setError('Heslo musí mít alespoň 8 znaků');
-      return;
+    // Validate password using Firebase policy
+    try {
+      const status = await validatePassword(auth, password);
+      
+      if (!status.isValid) {
+        const errors = [];
+        
+        if (status.meetsMinPasswordLength === false) {
+          errors.push('alespoň 8 znaků');
+        }
+        if (status.containsLowercaseLetter === false) {
+          errors.push('malé písmeno');
+        }
+        if (status.containsUppercaseLetter === false) {
+          errors.push('velké písmeno');
+        }
+        if (status.containsNumericCharacter === false) {
+          errors.push('číslici');
+        }
+        
+        setError(`Heslo musí obsahovat: ${errors.join(', ')}`);
+        return;
+      }
+    } catch (validationError) {
+      console.error('Password validation error:', validationError);
     }
 
     setLoading(true);
@@ -72,6 +93,24 @@ export function SignupForm({
                   {error}
                 </div>
               )}
+              <Field>
+                <FieldLabel htmlFor="name">Jméno</FieldLabel>
+                <Input 
+                  id="name" 
+                  type="text" 
+                  placeholder="Jan" 
+                  required 
+                />
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="surname">Příjmení</FieldLabel>
+                <Input 
+                  id="surname" 
+                  type="text" 
+                  placeholder="Novák" 
+                  required 
+                />
+              </Field>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input 
@@ -109,7 +148,7 @@ export function SignupForm({
                   </Field>
                 </Field>
                 <FieldDescription>
-                  Musí mít alespoň 8 znaků.
+                  Musí obsahovat: alespoň 8 znaků, malé písmeno, velké písmeno a číslici.
                 </FieldDescription>
               </Field>
               <Field>

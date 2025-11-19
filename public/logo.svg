@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Vrstva_2" data-name="Vrstva 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 947.87 997.3">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fff;
+      }
+
+      .cls-2 {
+        fill: #9dc4df;
+      }
+
+      .cls-3 {
+        fill: #a5c7e7;
+      }
+
+      .cls-4 {
+        fill: #484a4d;
+        font-family: Montserrat-SemiBold, Montserrat;
+        font-size: 72px;
+        font-weight: 600;
+      }
+    </style>
+  </defs>
+  <text class="cls-4" transform="translate(440.64 519.71)"><tspan x="0" y="0">builder</tspan></text>
+  <circle class="cls-2" cx="219.5" cy="498.65" r="105.32"/>
+  <g>
+    <rect class="cls-1" x="182.48" y="465.86" width="29.09" height="18.76"/>
+    <rect class="cls-1" x="182.48" y="512.69" width="29.09" height="18.76"/>
+    <path class="cls-1" d="M179.69,465.86h-3.24l-15.25,15.25v35.14l15.19,15.19h3.29s.09-65.49,0-65.58Z"/>
+  </g>
+  <g>
+    <polygon class="cls-1" points="213.65 479.77 246.23 528.83 257.29 511.51 229.52 468.47 213.65 479.77"/>
+    <polygon class="cls-1" points="247.5 490.47 259.04 508.33 277.79 478.75 262.64 468.47 247.5 490.47"/>
+  </g>
+  <g>
+    <rect class="cls-3" x="363.52" y="473.36" width="22.43" height="14.46"/>
+    <rect class="cls-3" x="363.52" y="509.47" width="22.43" height="14.46"/>
+    <path class="cls-3" d="M361.37,473.36h-2.5l-11.76,11.76v27.1l11.71,11.71h2.54s.07-50.5,0-50.57Z"/>
+  </g>
+  <g>
+    <polygon class="cls-3" points="390.09 484.1 415.21 521.92 423.74 508.57 402.33 475.38 390.09 484.1"/>
+    <polygon class="cls-3" points="416.2 492.35 425.1 506.11 439.55 483.31 427.87 475.38 416.2 492.35"/>
+  </g>
+</svg>
