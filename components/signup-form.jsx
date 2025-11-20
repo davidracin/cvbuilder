@@ -20,6 +20,8 @@ export function SignupForm({
   ...props
 }) {
   const router = useRouter();
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -65,7 +67,7 @@ export function SignupForm({
 
     setLoading(true);
 
-    const { user, error: signUpError } = await signUp(email, password);
+    const { user, error: signUpError } = await signUp(email, password, firstName, lastName);
 
     if (signUpError) {
       setError(signUpError);
@@ -98,7 +100,9 @@ export function SignupForm({
                 <Input 
                   id="name" 
                   type="text" 
-                  placeholder="Jan" 
+                  placeholder="Jan"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
                   required 
                 />
               </Field>
@@ -107,7 +111,9 @@ export function SignupForm({
                 <Input 
                   id="surname" 
                   type="text" 
-                  placeholder="Novák" 
+                  placeholder="Novák"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
                   required 
                 />
               </Field>

@@ -25,8 +25,9 @@ export default function EditorPage() {
     try {
       const exportFilename = filename || `${cvData.personal.name.replace(/\s+/g, '_')}_CV.pdf`;
       const success = await exportCVToPDF('cv-preview', exportFilename, {
-        scale: 2,
-        quality: 0.95,
+        scale: 3, // Higher resolution for better quality
+        quality: 1.0, // Maximum quality
+        imageFormat: 'PNG', // PNG for sharper text and colors
         backgroundColor: '#ffffff',
         width: 210, // A4 width in mm
         height: 297 // A4 height in mm
