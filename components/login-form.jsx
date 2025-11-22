@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from "react"
+import { useState, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { signIn } from "@/lib/firebaseAuth"
 
-export function LoginForm({
+function LoginFormContent({
   className,
   ...props
 }) {
@@ -99,5 +99,23 @@ export function LoginForm({
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export function LoginForm(props) {
+  return (
+    <Suspense fallback={
+      <div className="flex flex-col gap-6">
+        <Card className="overflow-hidden p-0">
+          <CardContent className="grid p-0 md:grid-cols-2">
+            <div className="p-6 md:p-8 flex items-center justify-center">
+              <div className="animate-pulse text-gray-600">Načítání...</div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    }>
+      <LoginFormContent {...props} />
+    </Suspense>
   );
 }
