@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useState, useEffect } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -19,6 +19,7 @@ export function LoginForm({
   ...props
 }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -35,8 +36,9 @@ export function LoginForm({
       setError(signInError);
       setLoading(false);
     } else {
-      // Success - redirect to home or editor
-      router.push('/');
+      // Success - redirect to the original page or home
+      const from = searchParams.get('from');
+      router.push(from || '/');
     }
   };
 
