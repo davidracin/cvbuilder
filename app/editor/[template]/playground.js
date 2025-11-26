@@ -1,9 +1,12 @@
 "use client";
-import { useParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { exportCVToPDF } from "../../../lib/pdfExport";
 import ExportButton from "../../../components/ExportButton";
 import { useToast } from "../../../components/Toast";
 import { useCVData } from "../../../hooks/useCVData";
+import { useAuth } from "../../../hooks/useAuth";
+import { createCV, updateCV, getCV } from "../../../lib/firestoreCVs";
 import PersonalInfoForm from "../../../components/forms/PersonalInfoForm";
 import ExperienceForm from "../../../components/forms/ExperienceForm";
 import EducationForm from "../../../components/forms/EducationForm";
@@ -16,9 +19,71 @@ import ProfesionalniTemplate from "../../../components/templates/ProfesionalniTe
 
 export default function EditorPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const templateSlug = params.template;
   const { addToast, ToastContainer } = useToast();
-  const { cvData, updateCvData, addItem, removeItem } = useCVData();
+  const { cvData, cvId, cvName, setCVName, updateCvData, addItem, removeItem, loadCV } = useCVData();
+  const { user } = useAuth();
+  const [saving, setSaving] = useState(false);
+
+  // Load CV from URL parameter on mount
+  useEffect(() => {
+    const cvIdFromUrl = searchParams.get('cvId');
+    if (cvIdFromUrl && user) {
+      loadCVFromFirestore(cvIdFromUrl);
+    }
+  }, [searchParams, user]);
+
+  const loadCVFromFirestore = async (id) => {
+    const { cv, error } = await getCV(id);
+    if (error) {
+      addToast('Chyba při načítání CV', 'error');
+      return;
+    }
+    if (cv && cv.userId === user.uid) {
+      loadCV(cv.cvData, cv.id, cv.cvName);
+    } else {
+      addToast('Nemáte oprávnění k tomuto CV', 'error');
+      router.push('/');
+    }
+  };
+
+  const handleSave = async () => {
+    if (!user) {
+      addToast('Musíte být přihlášeni', 'error');
+      router.push('/login');
+      return;
+    }
+
+    setSaving(true);
+
+    if (cvId) {
+      // Update existing CV
+      const { error } = await updateCV(cvId, cvData, cvName);
+      if (error) {
+        addToast('Chyba při ukládání', 'error');
+      } else {
+        addToast('CV uloženo', 'success');
+      }
+    } else {
+      // Create new CV
+      const { id, cvName: generatedName, error } = await createCV(
+        user.uid,
+        cvData,
+        templateSlug,
+        cvName || null
+      );
+      if (error) {
+        addToast('Chyba při vytváření CV', 'error');
+      } else {
+        loadCV(cvData, id, generatedName);
+        router.replace(`/editor/${templateSlug}?cvId=${id}`);
+        addToast('CV vytvořeno', 'success');
+      }
+    }
+    setSaving(false);
+  };
 
   // Function to export CV to PDF
   const handleExportToPDF = async (filename) => {
@@ -35,6 +100,12 @@ export default function EditorPage() {
       
       if (success) {
         addToast('CV bylo úspěšně exportováno do PDF!', 'success');
+        
+        // Update lastExported timestamp if CV is saved
+        if (cvId) {
+          const { updateLastExported } = await import('../../../lib/firestoreCVs');
+          await updateLastExported(cvId);
+        }
       } else {
         addToast('Nepodařilo se exportovat CV. Zkuste to prosím znovu.', 'error');
       }
@@ -73,6 +144,27 @@ export default function EditorPage() {
       <div className="w-1/3 bg-sidebar text-sidebar-foreground overflow-y-auto p-4 border-r border-sidebar-border">
         <div className="mb-4">
           <h1 className="text-xl font-bold mb-3">Editor CV - {templateSlug}</h1>
+          
+          {/* CV Name Input */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-2">Název CV</label>
+            <input
+              type="text"
+              value={cvName}
+              onChange={(e) => setCVName(e.target.value)}
+              placeholder="Zadejte název vašeho CV"
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          {/* Save Button */}
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="w-full mb-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+          >
+            {saving ? 'Ukládání...' : cvId ? 'Uložit změny' : 'Uložit CV'}
+          </button>
           
           {/* Export Button */}
           <ExportButton 

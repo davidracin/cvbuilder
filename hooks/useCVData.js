@@ -3,6 +3,8 @@ import { DEFAULT_CV_DATA, NEW_ITEM_TEMPLATES } from "../lib/constants";
 
 export function useCVData() {
   const [cvData, setCvData] = useState(DEFAULT_CV_DATA);
+  const [cvId, setCVId] = useState(null);
+  const [cvName, setCVName] = useState('');
 
   // Function to update CV data
   const updateCvData = (section, field, value, id = null) => {
@@ -60,10 +62,21 @@ export function useCVData() {
     });
   };
 
+  // Function to load a complete CV from database
+  const loadCV = (newCvData, id, name) => {
+    setCvData(newCvData);
+    setCVId(id);
+    setCVName(name);
+  };
+
   return {
     cvData,
+    cvId,
+    cvName,
+    setCVName,
     updateCvData,
     addItem,
-    removeItem
+    removeItem,
+    loadCV
   };
 }
