@@ -64,8 +64,13 @@ export default function SettingsPage() {
   }, [user]);
 
   // Redirect if not logged in
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login');
+    }
+  }, [loading, user, router]);
+
   if (!loading && !user) {
-    router.push('/login');
     return null;
   }
 
