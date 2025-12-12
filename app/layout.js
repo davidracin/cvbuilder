@@ -23,7 +23,7 @@ export default function RootLayout({ children }) {
   const hideNavbar = pathname?.startsWith('/editor');
 
   return (
-    <html lang="en">
+    <html lang="cs">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

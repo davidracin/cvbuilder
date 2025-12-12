@@ -62,6 +62,20 @@ export function useCVData() {
     });
   };
 
+  // Function to reorder items in array sections
+  const reorderItems = (section, startIndex, endIndex) => {
+    setCvData((prevData) => {
+      const items = Array.from(prevData[section]);
+      const [removed] = items.splice(startIndex, 1);
+      items.splice(endIndex, 0, removed);
+      
+      return {
+        ...prevData,
+        [section]: items
+      };
+    });
+  };
+  
   // Function to add custom section
   const addCustomSection = (sectionType, title) => {
     setCvData((prevData) => {
