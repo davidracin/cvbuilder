@@ -1,36 +1,11 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# ÚVOD
 
-## Getting Started
+Tvorba životopisu je jednou z životních situacích, kterou si projde téměř každý člověk při hledání zaměstnání, brigády nebo odborné praxe. V dnešní době většinu životopisů vytváříme a posíláme přes internet. Existuje mnoho nástrojů, které nám s tvorbou našeho ideálního životopisu pomáhají. Hodně těchto nástrojů je buď příliš složitých a vyžadují, aby lidé byli technicky pokročilí s počítačovými programy, nebo jsou natolik omezené, že uživatelům neumožňují přizpůsobit životopis svým ideálním představám. Potom vytváření životopisu lidem zabere mnoho času místo toho, aby vyhledávali lepši pracovní nabídky nebo samotnému ucházení se o pracovní pozici.
 
-First, run the development server:
+Tento maturitní projekt si klade za cíl vytvořit funkční webovou aplikaci dostupnou na internetu, která umožní uživatelům vytvořit životopis bez znalosti grafických nástrojů. Aplikace musí být přístupná bez instalace a běžet v moderním webovém prohlížeči. Bude obsahovat minimálně tři odlišné šablony životopisů, které uživatelé mohou upravovat a přizpůsobovat podle svých osobních údajů. Součástí je také implementace funkcí registrace a přihlášení uživatelů. Při vytvoření účtu vznikne v systému role uživatele. Aplikace bude dostupná jak pro přihlášené uživatele, tak i pro uživatele, kteří se rozhodnou nezaložit si účet. Přihlášený uživatel bude mít navíc oproti nepřihlášeným uživatelům schopnost uložení rozpracovaného životopisu a následné zpětné úpravy. Uživatelé budou mít možnost správy šablon. Mohou přidávat vlastní sekce, měnit barvy šablon, font písma a upravovat rozložení mezi sekcemi. Aplikace umožní zobrazení náhledů jednotlivých šablon. Bude volba exportu životopisu do formátu PDF.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Na závěr bude provedeno uživatelské testování s minimálně 5 testujícími, kteří vyzkouší aplikaci. Projdou si jednotlivé funkce a podají zpětnou vazbu a návrhy ke zlepšení produktu. Testující vyberu záměrně technicky zkušené i méně zkušené v práci s počítačovými programy. Následná zpětná vazba mi pomůže k odhalení případných nedostatků aplikace, její funkčnosti a vylepšení intuitivnosti v ovládatelnosti a celkového uživatelského prostředí. Součástí práce je také ukládání dat na server, práce s databází a nasazení aplikace na webový hosting.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Význam projektu nespočívá pouze v samostatném produktu, ale také v technických dovednostech, které se během práce naučím. Získám zkušenosti s návrhem a realizací funkční webové aplikace, nalezením ideální architektury, vytvořením datového modelu, prací s databází a realizací uživatelského rozhraní, které bude přehledné i pro uživatele bez předchozích zkušeností s grafickými programy. Projekt propojuje analytickou, návrhovou a programátorskou část práce.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Poskytne mi praktickou zkušenost s nástroji, které se běžně vyskytují a využívají ve velkých firmách a v komerčních aplikacích. Díky těmhle faktorům budu mít větší šanci uplatnění na pracovním trhu. Projekt má přínos jak pro lidi využívající produkt, tak i pro mě jako tvůrce.
