@@ -88,7 +88,7 @@ export default function Navbar() {
             <div className="hidden sm:ml-6 sm:flex sm:items-center">
               <Link 
                 href="/" 
-                className="inline-flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white"
+                className="inline-flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-100 hover:text-gray-600 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white"
               >
                 Hlavní stránka
               </Link>
