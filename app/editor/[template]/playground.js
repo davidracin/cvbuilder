@@ -12,10 +12,19 @@ import ExperienceForm from "../../../components/forms/ExperienceForm";
 import EducationForm from "../../../components/forms/EducationForm";
 import SkillsForm from "../../../components/forms/SkillsForm";
 import LanguagesForm from "../../../components/forms/LanguagesForm";
+import CustomSectionsForm from "../../../components/forms/CustomSectionsForm";
+import DesignTab from "../../../components/editor/DesignTab";
 import ModerniCVTemplate from "../../../components/templates/ModerniCVTemplate";
 import KlasickeTemplate from "../../../components/templates/KlasickeTemplate";
 import KreativniTemplate from "../../../components/templates/KreativniTemplate";
 import ProfesionalniTemplate from "../../../components/templates/ProfesionalniTemplate";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 export default function EditorPage() {
   const params = useParams();
@@ -23,7 +32,27 @@ export default function EditorPage() {
   const router = useRouter();
   const templateSlug = params.template;
   const { addToast, ToastContainer } = useToast();
-  const { cvData, cvId, cvName, setCVName, updateCvData, addItem, removeItem, loadCV } = useCVData();
+  const { 
+    cvData, 
+    cvId, 
+    cvName, 
+    setCVName, 
+    updateCvData, 
+    addItem, 
+    removeItem, 
+    reorderItems,
+    addCustomSection,
+    updateCustomSection,
+    removeCustomSection,
+    addCustomSectionItem,
+    updateCustomSectionItem,
+    removeCustomSectionItem,
+    reorderCustomSectionItems,
+    updateDesignSettings,
+    resetDesignSettings,
+    getDesignSettings,
+    loadCV 
+  } = useCVData();
   const { user } = useAuth();
   const [saving, setSaving] = useState(false);
 
@@ -118,17 +147,31 @@ export default function EditorPage() {
     }
   };
 
+  // Get design settings with template defaults
+  const designSettings = getDesignSettings(templateSlug);
+
+  // Handle design reset
+  const handleResetDesign = () => {
+    resetDesignSettings(templateSlug);
+    addToast('Design resetován na výchozí nastavení', 'success');
+  };
+
   // Render the appropriate template
   const renderTemplate = () => {
+    const templateProps = {
+      data: cvData,
+      designSettings: designSettings
+    };
+
     switch (templateSlug) {
       case "moderni":
-        return <ModerniCVTemplate data={cvData} />;
+        return <ModerniCVTemplate {...templateProps} />;
       case "klasicke":
-        return <KlasickeTemplate data={cvData} />;
+        return <KlasickeTemplate {...templateProps} />;
       case "kreativni":
-        return <KreativniTemplate data={cvData} />;
+        return <KreativniTemplate {...templateProps} />;
       case "profesionalni":
-        return <ProfesionalniTemplate data={cvData} />;
+        return <ProfesionalniTemplate {...templateProps} />;
       default:
         return (
           <div className="flex flex-col items-center justify-center h-full">
@@ -143,81 +186,188 @@ export default function EditorPage() {
       {/* Sidebar for editing */}
       <div className="w-1/3 bg-sidebar text-sidebar-foreground overflow-y-auto p-4 border-r border-sidebar-border">
         <div className="mb-4">
-          <h1 className="text-xl font-bold mb-3">Editor CV - {templateSlug}</h1>
+          <h1 className="text-xl font-bold mb-3">Editor CV</h1>
           
           {/* CV Name Input */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium mb-2">Název CV</label>
+          <div className="mb-3">
+            <label className="block text-sm font-medium mb-1.5">Název CV</label>
             <input
               type="text"
               value={cvName}
               onChange={(e) => setCVName(e.target.value)}
               placeholder="Zadejte název vašeho CV"
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-sidebar-ring focus:border-sidebar-ring bg-sidebar-accent text-sidebar-accent-foreground"
             />
           </div>
 
-          {/* Save Button */}
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="w-full mb-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-          >
-            {saving ? 'Ukládání...' : cvId ? 'Uložit změny' : 'Uložit CV'}
-          </button>
-          
-          {/* Export Button */}
-          <ExportButton 
-            onExport={handleExportToPDF}
-            filename={`${cvData.personal.name.replace(/\s+/g, '_')}_CV.pdf`}
-          />
+          {/* Action Buttons */}
+          <div className="flex gap-2 mb-4">
+            {user ? (
+              <button
+                onClick={handleSave}
+                disabled={saving}
+                className="flex-1 px-4 py-2 bg-sidebar-primary text-sidebar-primary-foreground rounded-md hover:bg-sidebar-primary/90 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+              >
+                {saving ? 'Ukládání...' : cvId ? 'Uložit' : 'Vytvořit'}
+              </button>
+            ) : (
+              <div className="flex-1 px-4 py-2 bg-gray-300 text-gray-500 rounded-md text-sm font-medium text-center cursor-not-allowed">
+                Přihlaste se pro uložení
+              </div>
+            )}
+            
+            {/* Export Button */}
+            <ExportButton 
+              onExport={handleExportToPDF}
+              filename={`${cvData.personal.name.replace(/\s+/g, '_')}_CV.pdf`}
+            />
+          </div>
         </div>
-        
-        {/* Personal Information Section */}
-        <PersonalInfoForm 
-          data={cvData.personal} 
-          onUpdate={updateCvData} 
-        />
-        
-        {/* Work Experience Section */}
-        <ExperienceForm 
-          items={cvData.experience}
-          onUpdate={updateCvData}
-          onAdd={addItem}
-          onRemove={removeItem}
-        />
-        
-        {/* Education Section */}
-        <EducationForm 
-          items={cvData.education}
-          onUpdate={updateCvData}
-          onAdd={addItem}
-          onRemove={removeItem}
-        />
-        
-        {/* Skills Section */}
-        <SkillsForm 
-          items={cvData.skills}
-          onUpdate={updateCvData}
-          onAdd={addItem}
-          onRemove={removeItem}
-        />
-        
-        {/* Languages Section */}
-        <LanguagesForm 
-          items={cvData.languages}
-          onUpdate={updateCvData}
-          onAdd={addItem}
-          onRemove={removeItem}
-        />
+
+        {/* Tabbed Interface */}
+        <Tabs defaultValue="content" className="w-full">
+          <TabsList className="grid w-full grid-cols-3 mb-4">
+            <TabsTrigger value="content">Obsah</TabsTrigger>
+            <TabsTrigger value="design">Design</TabsTrigger>
+            <TabsTrigger value="information">Informace</TabsTrigger>
+          </TabsList>
+
+          {/* Content Tab */}
+          <TabsContent value="content" className="space-y-2">
+            <Accordion type="single" collapsible defaultValue="personal" className="w-full">
+              <AccordionItem value="personal">
+                <AccordionTrigger className="text-sm font-semibold">
+                  Osobní údaje
+                </AccordionTrigger>
+                <AccordionContent className="pt-2">
+                  <PersonalInfoForm 
+                    data={cvData.personal} 
+                    onUpdate={updateCvData} 
+                  />
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="experience">
+                <AccordionTrigger className="text-sm font-semibold">
+                  Pracovní zkušenosti
+                </AccordionTrigger>
+                <AccordionContent className="pt-2">
+                  <ExperienceForm 
+                    items={cvData.experience}
+                    onUpdate={updateCvData}
+                    onAdd={addItem}
+                    onRemove={removeItem}
+                    onReorder={reorderItems}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="education">
+                <AccordionTrigger className="text-sm font-semibold">
+                  Vzdělání
+                </AccordionTrigger>
+                <AccordionContent className="pt-2">
+                  <EducationForm 
+                    items={cvData.education}
+                    onUpdate={updateCvData}
+                    onAdd={addItem}
+                    onRemove={removeItem}
+                    onReorder={reorderItems}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="skills">
+                <AccordionTrigger className="text-sm font-semibold">
+                  Dovednosti
+                </AccordionTrigger>
+                <AccordionContent className="pt-2">
+                  <SkillsForm 
+                    items={cvData.skills}
+                    onUpdate={updateCvData}
+                    onAdd={addItem}
+                    onRemove={removeItem}
+                    onReorder={reorderItems}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="languages">
+                <AccordionTrigger className="text-sm font-semibold">
+                  Jazyky
+                </AccordionTrigger>
+                <AccordionContent className="pt-2">
+                  <LanguagesForm 
+                    items={cvData.languages}
+                    onUpdate={updateCvData}
+                    onAdd={addItem}
+                    onRemove={removeItem}
+                    onReorder={reorderItems}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="custom">
+                <AccordionTrigger className="text-sm font-semibold">
+                  Vlastní sekce
+                </AccordionTrigger>
+                <AccordionContent className="pt-2">
+                  <CustomSectionsForm 
+                    sections={cvData.customSections}
+                    onAddSection={addCustomSection}
+                    onUpdateSection={updateCustomSection}
+                    onRemoveSection={removeCustomSection}
+                    onAddItem={addCustomSectionItem}
+                    onUpdateItem={updateCustomSectionItem}
+                    onRemoveItem={removeCustomSectionItem}
+                    onReorderItems={reorderCustomSectionItems}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </TabsContent>
+
+          {/* Design Tab */}
+          <TabsContent value="design">
+            <DesignTab
+              designSettings={designSettings}
+              onUpdateDesignSettings={updateDesignSettings}
+              onResetDesignSettings={handleResetDesign}
+              templateName={templateSlug}
+            />
+          </TabsContent>
+
+          {/* Settings Tab */}
+          <TabsContent value="information" className="space-y-4">
+            <div className="p-4 border rounded bg-sidebar-accent/50">
+              <h3 className="font-semibold mb-2">Informace o CV</h3>
+              <div className="space-y-2 text-sm text-muted-foreground">
+                <div className="flex justify-between">
+                  <span>Šablona:</span>
+                  <span className="font-medium text-foreground capitalize">{templateSlug}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Stav:</span>
+                  <span className="font-medium text-foreground">{cvId ? 'Uloženo' : 'Neuloženo'}</span>
+                </div>
+                {cvId && (
+                  <div className="flex justify-between">
+                    <span>ID:</span>
+                    <span className="font-mono text-xs text-foreground">{cvId}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
 
       {/* Preview area */}
-      <div className="w-2/3 overflow-y-auto p-6 bg-white flex flex-col items-center">
+      <div className="w-2/3 overflow-y-auto p-6 bg-gray-100 flex flex-col items-center">
         <div 
-          className="w-full max-w-3xl shadow-lg min-h-[500px] p-8 bg-white"
+          className="w-full max-w-3xl shadow-lg min-h-[500px] p-8"
           style={{
-            backgroundColor: '#ffffff',
+            backgroundColor: designSettings.colors.background,
             minWidth: '800px',
             minHeight: '1000px',
             border: '1px solid #e5e7eb',
@@ -228,7 +378,6 @@ export default function EditorPage() {
           <div 
             id="cv-preview"
             style={{
-              backgroundColor: '#ffffff',
               padding: '0',
               margin: '0',
               border: 'none',

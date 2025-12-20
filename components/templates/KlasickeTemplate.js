@@ -1,40 +1,65 @@
-export default function KlasickeTemplate({ data }) {
+import { formatDate, formatDateFull } from "@/lib/utils";
+
+export default function KlasickeTemplate({ data, designSettings }) {
+  const { colors, fonts, spacing } = designSettings;
+  
+  const sectionStyle = {
+    marginBottom: `${spacing.section}px`
+  };
+
+  const headingStyle = {
+    fontFamily: fonts.heading,
+    color: colors.primary
+  };
+
+  const bodyTextStyle = {
+    fontFamily: fonts.body,
+    color: colors.text
+  };
+
+  const secondaryTextStyle = {
+    fontFamily: fonts.body,
+    color: colors.textSecondary
+  };
+
   return (
-    <div className="font-serif">
+    <div style={{ fontFamily: fonts.body }}>
       <header className="text-center mb-8">
-        <h1 className="text-3xl font-bold">{data.personal.name}</h1>
-        <p className="text-xl mt-1">{data.personal.title}</p>
+        <h1 className="text-3xl font-bold" style={headingStyle}>{data.personal.name}</h1>
+        <p className="text-xl mt-1" style={secondaryTextStyle}>{data.personal.title}</p>
         
-        <div className="mt-3 text-sm text-gray-600">
+        <div className="mt-3 text-sm" style={secondaryTextStyle}>
           <div>{data.personal.email} | {data.personal.phone}</div>
           <div>{data.personal.address}</div>
           {data.personal.dateOfBirth && (
-            <div>Datum narození: {data.personal.dateOfBirth}</div>
+            <div>Datum narození: {formatDateFull(data.personal.dateOfBirth)}</div>
           )}
         </div>
       </header>
       
-      <hr className="my-4 border-gray-300" />
+      <hr className="my-4" style={{ borderColor: colors.accent }} />
       
-      <section className="mb-6">
-        <h2 className="text-xl font-bold uppercase tracking-wider mb-3">Vzdělání</h2>
+      <section style={sectionStyle}>
+        <h2 className="text-xl font-bold uppercase tracking-wider mb-3" style={headingStyle}>Vzdělání</h2>
         {data.education.map((edu) => (
           <div key={edu.id} className="mb-4">
-            <div className="font-bold">{edu.degree}, {edu.school}</div>
-            <div className="text-gray-600 italic">{edu.startDate} - {edu.endDate}</div>
-            <p className="mt-1">{edu.description}</p>
+            <div className="font-bold" style={secondaryTextStyle}>{edu.degree}, {edu.school}</div>
+            <div className="italic" style={secondaryTextStyle}>
+              {formatDate(edu.startDate)} - {formatDate(edu.endDate)}
+            </div>
+            <p className="mt-1" style={bodyTextStyle}>{edu.description}</p>
           </div>
         ))}
       </section>
       
-      <hr className="my-4 border-gray-300" />
+      <hr className="my-4" style={{ borderColor: colors.accent }} />
       
       <div className="flex flex-wrap">
         <section className="w-1/2 pr-4">
-          <h2 className="text-xl font-bold uppercase tracking-wider mb-3">Dovednosti</h2>
+          <h2 className="text-xl font-bold uppercase tracking-wider mb-3" style={headingStyle}>Dovednosti</h2>
           <ul className="list-disc pl-5">
             {data.skills.map((skill) => (
-              <li key={skill.id}>
+              <li key={skill.id} style={bodyTextStyle}>
                 {skill.name}
               </li>
             ))}
@@ -42,10 +67,10 @@ export default function KlasickeTemplate({ data }) {
         </section>
         
         <section className="w-1/2 pl-4">
-          <h2 className="text-xl font-bold uppercase tracking-wider mb-3">Jazyky</h2>
+          <h2 className="text-xl font-bold uppercase tracking-wider mb-3" style={headingStyle}>Jazyky</h2>
           <ul className="list-disc pl-5">
             {data.languages.map((language) => (
-              <li key={language.id}>
+              <li key={language.id} style={bodyTextStyle}>
                 {language.name} - {language.level}
               </li>
             ))}
@@ -53,15 +78,17 @@ export default function KlasickeTemplate({ data }) {
         </section>
       </div>
       
-      <hr className="my-4 border-gray-300" />
+      <hr className="my-4" style={{ borderColor: colors.accent }} />
       
-      <section className="mb-6">
-        <h2 className="text-xl font-bold uppercase tracking-wider mb-3">Pracovní zkušenosti</h2>
+      <section style={sectionStyle}>
+        <h2 className="text-xl font-bold uppercase tracking-wider mb-3" style={headingStyle}>Pracovní zkušenosti</h2>
         {data.experience.map((exp) => (
           <div key={exp.id} className="mb-4">
-            <div className="font-bold">{exp.title}, {exp.company}</div>
-            <div className="text-gray-600 italic">{exp.startDate} - {exp.endDate}</div>
-            <p className="mt-1">{exp.description}</p>
+            <div className="font-bold" style={secondaryTextStyle}>{exp.title}, {exp.company}</div>
+            <div className="italic" style={secondaryTextStyle}>
+              {formatDate(exp.startDate)} - {exp.endDate ? formatDate(exp.endDate) : 'Současnost'}
+            </div>
+            <p className="mt-1" style={bodyTextStyle}>{exp.description}</p>
           </div>
         ))}
       </section>
