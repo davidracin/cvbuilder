@@ -119,9 +119,10 @@ export default function KreativniTemplate({ data, designSettings }) {
           <div className="p-5 rounded-lg shadow-sm" style={{ backgroundColor: '#ffffff' }}>
             <ul className="list-disc pl-5">
               {data.skills.map((skill) => (
-                <li key={skill.id} className="mb-2">
+                <div key={skill.id} className="mb-2 flex items-center">
+                  <span className="mr-2 w-2 h-2 rounded-full" style={{ backgroundColor: colors.accent }}></span>
                   <span className="font-medium" style={bodyTextStyle}>{skill.name}</span>
-                </li>
+                </div>
               ))}
             </ul>
           </div>

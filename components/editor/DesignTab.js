@@ -62,7 +62,7 @@ function FontSelector({ label, value, onChange, description }) {
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full p-2 border rounded bg-sidebar-accent text-sidebar-accent-foreground focus:ring-2 focus:ring-sidebar-ring focus:border-sidebar-ring focus:outline-none transition-all"
+        className="w-full p-2 border-2 rounded bg-sidebar-accent text-sidebar-accent-foreground focus:border-sidebar-ring focus:outline-none transition-all"
         style={{ fontFamily: value }}
       >
         {FONT_OPTIONS.map((font) => (
@@ -73,7 +73,6 @@ function FontSelector({ label, value, onChange, description }) {
       </select>
       <div className="p-3 border rounded bg-sidebar/30 text-center" style={{ fontFamily: value }}>
         <p className="text-sm">Příklad textu v tomto písmu</p>
-        <p className="text-xs text-muted-foreground mt-1">The quick brown fox jumps</p>
       </div>
     </div>
   );
