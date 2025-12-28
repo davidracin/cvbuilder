@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
-import { exportCVToPDF } from "../../../lib/pdfExport";
+import { exportToPDF } from "../../../lib/pdfExportNew";
 import ExportButton from "../../../components/ExportButton";
 import { useToast } from "../../../components/Toast";
 import { useCVData } from "../../../hooks/useCVData";
@@ -117,15 +117,7 @@ export default function EditorPage() {
   // Function to export CV to PDF
   const handleExportToPDF = async (filename) => {
     try {
-      const exportFilename = filename || `${cvData.personal.name.replace(/\s+/g, '_')}_CV.pdf`;
-      const success = await exportCVToPDF('cv-preview', exportFilename, {
-        scale: 3, // Higher resolution for better quality
-        quality: 1.0, // Maximum quality
-        imageFormat: 'PNG', // PNG for sharper text and colors
-        backgroundColor: '#ffffff',
-        width: 210, // A4 width in mm
-        height: 297 // A4 height in mm
-      });
+      const success = await exportToPDF(cvData, templateSlug, filename, designSettings);
       
       if (success) {
         addToast('CV bylo úspěšně exportováno do PDF!', 'success');
@@ -219,7 +211,7 @@ export default function EditorPage() {
             {/* Export Button */}
             <ExportButton 
               onExport={handleExportToPDF}
-              filename={`${cvData.personal.name.replace(/\s+/g, '_')}_CV.pdf`}
+              filename={`${cvName || templateSlug}_CV.pdf`}
             />
           </div>
         </div>
@@ -337,7 +329,7 @@ export default function EditorPage() {
             />
           </TabsContent>
 
-          {/* Settings Tab */}
+          {/* Information Tab */}
           <TabsContent value="information" className="space-y-4">
             <div className="p-4 border rounded bg-sidebar-accent/50">
               <h3 className="font-semibold mb-2">Informace o CV</h3>
