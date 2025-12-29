@@ -128,6 +128,19 @@ const createStyles = (designSettings) => {
       color: colors.text,
       marginBottom: 4,
     },
+    bulletDot: {
+      width: 4,
+      height: 4,
+      borderRadius: 2,
+      backgroundColor: colors.accent,
+      marginRight: 8,
+      marginTop: 4,
+    },
+    listRow: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      marginBottom: 4,
+    },
     listItemLevel: {
       fontSize: 9,
       color: colors.textSecondary,
@@ -248,7 +261,10 @@ export default function ModerniTemplatePDF({ data, designSettings }) {
           <View style={styles.column}>
             <Text style={styles.sectionTitle}>Dovednosti</Text>
             {data.skills.map((skill) => (
-              <Text key={skill.id} style={styles.listItem}>• {skill.name}</Text>
+              <View key={skill.id} style={styles.listRow}>
+                <View style={styles.bulletDot} />
+                <Text style={styles.listItem}>{skill.name}</Text>
+              </View>
             ))}
           </View>
 
@@ -256,8 +272,9 @@ export default function ModerniTemplatePDF({ data, designSettings }) {
           <View style={styles.columnRight}>
             <Text style={styles.sectionTitle}>Jazyky</Text>
             {data.languages.map((language) => (
-              <View key={language.id} style={{ flexDirection: 'row', marginBottom: 4 }}>
-                <Text style={styles.listItem}>• {language.name}</Text>
+              <View key={language.id} style={styles.listRow}>
+                <View style={styles.bulletDot} />
+                <Text style={styles.listItem}>{language.name}</Text>
                 <Text style={styles.listItemLevel}>({language.level})</Text>
               </View>
             ))}

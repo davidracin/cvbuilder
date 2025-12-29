@@ -57,9 +57,10 @@ export default function KlasickeTemplate({ data, designSettings }) {
       <div className="flex flex-wrap">
         <section className="w-1/2 pr-4">
           <h2 className="text-xl font-bold uppercase tracking-wider mb-3" style={headingStyle}>Dovednosti</h2>
-          <ul className="list-disc pl-5">
+          <ul className="pl-5">
             {data.skills.map((skill) => (
-              <li key={skill.id} style={bodyTextStyle}>
+              <li key={skill.id} className="flex items-center mb-1" style={bodyTextStyle}>
+                <span className="mr-2 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: colors.accent }}></span>
                 {skill.name}
               </li>
             ))}
@@ -68,9 +69,10 @@ export default function KlasickeTemplate({ data, designSettings }) {
         
         <section className="w-1/2 pl-4">
           <h2 className="text-xl font-bold uppercase tracking-wider mb-3" style={headingStyle}>Jazyky</h2>
-          <ul className="list-disc pl-5">
+          <ul className="pl-5">
             {data.languages.map((language) => (
-              <li key={language.id} style={bodyTextStyle}>
+              <li key={language.id} className="flex items-center mb-1" style={bodyTextStyle}>
+                <span className="mr-2 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: colors.accent }}></span>
                 {language.name} - {language.level}
               </li>
             ))}

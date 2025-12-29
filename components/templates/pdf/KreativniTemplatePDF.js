@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Document, Page, Text, View, StyleSheet, Svg, Circle } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 import { getPDFFont } from '@/lib/pdfFonts';
 
 // Helper function for date formatting
@@ -18,19 +18,15 @@ const formatDate = (isoDate) => {
 
 // Icon component using SVG circles
 const IconBadge = ({ color }) => (
-  <View style={{ width: 20, height: 20, marginRight: 8, borderRadius: 10, backgroundColor: color, justifyContent: 'center', alignItems: 'center' }}>
-    <Svg width="12" height="12" viewBox="0 0 12 12">
-      <Circle cx="6" cy="6" r="2" fill="white" />
-    </Svg>
+  <View style={{ width: 20, height: 20, marginRight: 8, borderRadius: 10, backgroundColor: color, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+    <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: '#ffffff' }} />
   </View>
 );
 
 // Section icon badge (larger)
 const SectionIconBadge = ({ color }) => (
-  <View style={{ width: 24, height: 24, marginRight: 8, borderRadius: 12, backgroundColor: color, justifyContent: 'center', alignItems: 'center' }}>
-    <Svg width="14" height="14" viewBox="0 0 14 14">
-      <Circle cx="7" cy="7" r="3" fill="white" />
-    </Svg>
+  <View style={{ width: 24, height: 24, marginRight: 8, borderRadius: 12, backgroundColor: color, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+    <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: '#ffffff' }} />
   </View>
 );
 

@@ -27,13 +27,14 @@ const createStyles = (designSettings) => {
       flexDirection: 'row',
       fontFamily: bodyFont,
       backgroundColor: '#ffffff',
+      padding: 0,
     },
     // Left sidebar styles
     sidebar: {
       width: '33%',
       backgroundColor: colors.primary,
-      padding: 20,
-      paddingTop: 30,
+      paddingHorizontal: 20,
+      paddingVertical: 30,
       minHeight: '100%',
     },
     sidebarName: {
@@ -72,6 +73,19 @@ const createStyles = (designSettings) => {
     sidebarListItem: {
       fontSize: 10,
       color: '#ffffff',
+      marginBottom: 6,
+    },
+    sidebarBulletDot: {
+      width: 4,
+      height: 4,
+      borderRadius: 2,
+      backgroundColor: colors.accent,
+      marginRight: 8,
+      marginTop: 4,
+    },
+    sidebarListRow: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
       marginBottom: 6,
     },
     languageItem: {
@@ -179,7 +193,10 @@ export default function ProfesionalniTemplatePDF({ data, designSettings }) {
           <View style={styles.sidebarSection}>
             <Text style={styles.sidebarSectionTitle}>Dovednosti</Text>
             {data.skills.map((skill) => (
-              <Text key={skill.id} style={styles.sidebarListItem}>• {skill.name}</Text>
+              <View key={skill.id} style={styles.sidebarListRow}>
+                <View style={styles.sidebarBulletDot} />
+                <Text style={styles.sidebarListItem}>{skill.name}</Text>
+              </View>
             ))}
           </View>
 

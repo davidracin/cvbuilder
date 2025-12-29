@@ -43,9 +43,10 @@ export default function ProfesionalniTemplate({ data, designSettings }) {
           
           <div className="mb-8">
             <h2 className="text-lg font-semibold pb-2 mb-3" style={{ borderBottom: `1px solid ${colors.accent}`, fontFamily: fonts.heading }}>Dovednosti</h2>
-            <ul className="list-disc pl-3">
+            <ul className="pl-1">
               {data.skills.map((skill) => (
-                <li key={skill.id} className="mb-2">
+                <li key={skill.id} className="mb-2 flex items-center">
+                  <span className="mr-2 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: colors.accent }}></span>
                   <span>{skill.name}</span>
                 </li>
               ))}

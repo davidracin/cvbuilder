@@ -110,6 +110,19 @@ const createStyles = (designSettings) => {
       marginBottom: 4,
       paddingLeft: 10,
     },
+    bulletDot: {
+      width: 4,
+      height: 4,
+      borderRadius: 2,
+      backgroundColor: colors.accent,
+      marginRight: 8,
+      marginTop: 4,
+    },
+    listRow: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      marginBottom: 4,
+    },
     bullet: {
       position: 'absolute',
       left: 0,
@@ -166,8 +179,9 @@ export default function KlasickeTemplatePDF({ data, designSettings }) {
           <View style={styles.column}>
             <Text style={styles.sectionTitle}>Dovednosti</Text>
             {data.skills.map((skill) => (
-              <View key={skill.id} style={{ flexDirection: 'row', marginBottom: 4 }}>
-                <Text style={styles.listItem}>• {skill.name}</Text>
+              <View key={skill.id} style={styles.listRow}>
+                <View style={styles.bulletDot} />
+                <Text style={styles.listItem}>{skill.name}</Text>
               </View>
             ))}
           </View>
@@ -176,9 +190,10 @@ export default function KlasickeTemplatePDF({ data, designSettings }) {
           <View style={styles.column}>
             <Text style={styles.sectionTitle}>Jazyky</Text>
             {data.languages.map((language) => (
-              <View key={language.id} style={{ flexDirection: 'row', marginBottom: 4 }}>
+              <View key={language.id} style={styles.listRow}>
+                <View style={styles.bulletDot} />
                 <Text style={styles.listItem}>
-                  • {language.name} - {language.level}
+                  {language.name} - {language.level}
                 </Text>
               </View>
             ))}

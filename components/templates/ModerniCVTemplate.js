@@ -163,9 +163,10 @@ export default function ModerniCVTemplate({ data, designSettings }) {
           >
             Dovednosti
           </h2>
-          <ul className="list-disc pl-5">
+          <ul className="pl-5">
             {data.skills.map((skill) => (
-              <li key={skill.id} className="mb-1">
+              <li key={skill.id} className="flex items-center mb-1">
+                <span className="mr-2 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: colors.accent }}></span>
                 <span style={bodyTextStyle}>{skill.name}</span>
               </li>
             ))}
@@ -179,9 +180,10 @@ export default function ModerniCVTemplate({ data, designSettings }) {
           >
             Jazyky
           </h2>
-          <ul className="list-disc pl-5">
+          <ul className="pl-5">
             {data.languages.map((language) => (
-              <li key={language.id} className="mb-1">
+              <li key={language.id} className="flex items-center mb-1">
+                <span className="mr-2 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: colors.accent }}></span>
                 <span style={bodyTextStyle}>{language.name}</span>
                 <span className="ml-2 text-sm" style={secondaryTextStyle}>
                   ({language.level})
