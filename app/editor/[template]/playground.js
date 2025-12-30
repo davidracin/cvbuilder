@@ -87,13 +87,15 @@ export default function EditorPage() {
 
     setSaving(true);
 
+    let savedCvId = cvId;
+
     if (cvId) {
       // Update existing CV
       const { error } = await updateCV(cvId, cvData, cvName);
       if (error) {
         addToast('Chyba při ukládání', 'error');
-      } else {
-        addToast('CV uloženo', 'success');
+        setSaving(false);
+        return;
       }
     } else {
       // Create new CV
@@ -105,12 +107,32 @@ export default function EditorPage() {
       );
       if (error) {
         addToast('Chyba při vytváření CV', 'error');
-      } else {
-        loadCV(cvData, id, generatedName);
-        router.replace(`/editor/${templateSlug}?cvId=${id}`);
-        addToast('CV vytvořeno', 'success');
+        setSaving(false);
+        return;
       }
+      savedCvId = id;
+      loadCV(cvData, id, generatedName);
+      router.replace(`/editor/${templateSlug}?cvId=${id}`);
     }
+
+    // Generate thumbnail (Base64 stored in Firestore)
+    try {
+      const pageElement = document.getElementById('cv-page');
+      if (pageElement && savedCvId) {
+        const { generateThumbnail } = await import('../../../lib/thumbnailService');
+        const { updateThumbnailUrl } = await import('../../../lib/firestoreCVs');
+        
+        const thumbnailBase64 = await generateThumbnail(pageElement);
+        if (thumbnailBase64) {
+          await updateThumbnailUrl(savedCvId, thumbnailBase64);
+        }
+      }
+    } catch (thumbnailError) {
+      console.error('Error generating thumbnail:', thumbnailError);
+      // Don't show error to user - thumbnail is non-critical
+    }
+
+    addToast(cvId ? 'CV uloženo' : 'CV vytvořeno', 'success');
     setSaving(false);
   };
 
@@ -357,11 +379,13 @@ export default function EditorPage() {
       {/* Preview area */}
       <div className="w-2/3 overflow-y-auto p-6 bg-gray-100 flex flex-col items-center">
         <div 
-          className="w-full max-w-3xl shadow-lg min-h-[500px] p-8"
+          id="cv-page"
+          className="w-full max-w-3xl shadow-lg min-h-[500px]"
           style={{
             backgroundColor: designSettings.colors.background,
-            minWidth: '800px',
-            minHeight: '1000px',
+            width: '794px',  // A4 width at 96 DPI
+            minHeight: '1123px', // A4 height at 96 DPI
+            padding: '40px',
             border: '1px solid #e5e7eb',
             position: 'relative'
           }}
