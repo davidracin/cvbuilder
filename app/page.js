@@ -8,10 +8,10 @@ export default function Home() {
   const router = useRouter();
 
   const templates = [
-    { id: 1, name: "Moderní CV", slug: "moderni" },
-    { id: 2, name: "Klasické CV", slug: "klasicke" },
-    { id: 3, name: "Kreativní CV", slug: "kreativni" },
-    { id: 4, name: "Profesionální CV", slug: "profesionalni" },
+    { id: 1, name: "Moderní CV", slug: "moderni", preview: "/templates/moderni-preview.webp" },
+    { id: 2, name: "Klasické CV", slug: "klasicke", preview: "/templates/klasicke-preview.webp" },
+    { id: 3, name: "Kreativní CV", slug: "kreativni", preview: "/templates/kreativni-preview.webp" },
+    { id: 4, name: "Profesionální CV", slug: "profesionalni", preview: "/templates/profesionalni-preview.webp" },
   ];
 
   const handleTemplateSelect = (template) => {
@@ -34,13 +34,23 @@ export default function Home() {
           {templates.map((template) => (
             <div 
               key={template.id}
-              className="relative aspect-[3/4] rounded-lg overflow-hidden cursor-pointer"
+              className="relative aspect-[3/4] rounded-lg overflow-hidden cursor-pointer shadow-md hover:shadow-xl transition-shadow"
               onMouseEnter={() => setHoveredTemplate(template.id)}
               onMouseLeave={() => setHoveredTemplate(null)}
             >
-              {/* Template preview - blank page with border */}
-              <div className="absolute inset-0 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 flex items-center justify-center">
-                <span className="text-gray-400 dark:text-gray-500 text-sm">
+              {/* Template preview image */}
+              <Image
+                src={template.preview}
+                alt={template.name}
+                fill
+                className="object-cover object-top"
+                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                priority={template.id <= 2}
+              />
+              
+              {/* Template name overlay at bottom */}
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+                <span className="text-white text-sm font-medium">
                   {template.name}
                 </span>
               </div>
