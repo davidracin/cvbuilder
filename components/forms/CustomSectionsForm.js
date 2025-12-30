@@ -89,9 +89,9 @@ function SortableCustomSectionItem({ item, sectionId, onUpdateItem, onRemoveItem
           <input 
             type="text" 
             className="w-full p-2 text-sm border rounded bg-sidebar-accent text-sidebar-accent-foreground focus:ring-2 focus:ring-sidebar-ring focus:outline-none transition-all"
-            value={item.organization}
-            onChange={(e) => onUpdateItem(sectionId, item.id, "organization", e.target.value)}
-            placeholder="Organizace"
+            value={item.subTitle}
+            onChange={(e) => onUpdateItem(sectionId, item.id, "subTitle", e.target.value)}
+            placeholder="Podtitul"
           />
           
           <div className="grid grid-cols-2 gap-2">
