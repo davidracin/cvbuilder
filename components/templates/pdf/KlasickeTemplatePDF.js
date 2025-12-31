@@ -133,6 +133,33 @@ const createStyles = (designSettings) => {
 export default function KlasickeTemplatePDF({ data, designSettings }) {
   const styles = createStyles(designSettings);
 
+  // Render custom section
+  const renderCustomSection = (section) => (
+    <View key={section.id}>
+      <View style={styles.divider} />
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>{section.title}</Text>
+        {section.items && section.items.map((item) => (
+          <View key={item.id} style={styles.itemContainer}>
+            <Text style={styles.itemTitle}>
+              {item.title}{item.subTitle && `, ${item.subTitle}`}
+            </Text>
+            {(item.startDate || item.endDate) && (
+              <Text style={styles.itemDate}>
+                {item.startDate && formatDate(item.startDate)}
+                {item.startDate && item.endDate && ' - '}
+                {item.endDate ? formatDate(item.endDate) : (item.startDate ? 'Současnost' : '')}
+              </Text>
+            )}
+            {item.description && (
+              <Text style={styles.itemDescription}>{item.description}</Text>
+            )}
+          </View>
+        ))}
+      </View>
+    </View>
+  );
+
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -219,6 +246,9 @@ export default function KlasickeTemplatePDF({ data, designSettings }) {
             </View>
           ))}
         </View>
+
+        {/* Custom Sections */}
+        {data.customSections && data.customSections.map(renderCustomSection)}
       </Page>
     </Document>
   );

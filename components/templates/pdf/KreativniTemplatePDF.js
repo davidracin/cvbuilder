@@ -173,6 +173,36 @@ export default function KreativniTemplatePDF({ data, designSettings }) {
   const styles = createStyles(designSettings);
   const { colors } = designSettings;
 
+  // Render custom section
+  const renderCustomSection = (section) => (
+    <View key={section.id} style={styles.section}>
+      <View style={styles.sectionHeader}>
+        <SectionIconBadge color={colors.accent} />
+        <Text style={styles.sectionTitle}>{section.title}</Text>
+      </View>
+      {section.items && section.items.map((item) => (
+        <View key={item.id} style={styles.itemCard}>
+          <View style={styles.itemHeader}>
+            <Text style={styles.itemTitle}>{item.title}</Text>
+            {(item.startDate || item.endDate) && (
+              <Text style={styles.itemDate}>
+                {item.startDate && formatDate(item.startDate)}
+                {item.startDate && item.endDate && ' - '}
+                {item.endDate ? formatDate(item.endDate) : (item.startDate ? 'Současnost' : '')}
+              </Text>
+            )}
+          </View>
+          {item.subTitle && (
+            <Text style={styles.itemSubtitle}>{item.subTitle}</Text>
+          )}
+          {item.description && (
+            <Text style={styles.itemDescription}>{item.description}</Text>
+          )}
+        </View>
+      ))}
+    </View>
+  );
+
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -282,6 +312,9 @@ export default function KreativniTemplatePDF({ data, designSettings }) {
             </View>
           </View>
         </View>
+
+        {/* Custom Sections */}
+        {data.customSections && data.customSections.map(renderCustomSection)}
       </Page>
     </Document>
   );

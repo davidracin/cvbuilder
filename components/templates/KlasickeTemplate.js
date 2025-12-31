@@ -22,6 +22,32 @@ export default function KlasickeTemplate({ data, designSettings }) {
     color: colors.textSecondary
   };
 
+  const renderCustomSection = (section) => (
+    <div key={section.id}>
+      <hr className="my-4" style={{ borderColor: colors.accent }} />
+      <section style={sectionStyle}>
+        <h2 className="text-xl font-bold uppercase tracking-wider mb-3" style={headingStyle}>{section.title}</h2>
+        {section.items && section.items.map((item) => (
+          <div key={item.id} className="mb-4">
+            <div className="font-bold" style={secondaryTextStyle}>
+              {item.title}{item.subTitle && `, ${item.subTitle}`}
+            </div>
+            {(item.startDate || item.endDate) && (
+              <div className="italic" style={secondaryTextStyle}>
+                {item.startDate && formatDate(item.startDate)}
+                {item.startDate && item.endDate && ' - '}
+                {item.endDate ? formatDate(item.endDate) : (item.startDate ? 'Současnost' : '')}
+              </div>
+            )}
+            {item.description && (
+              <p className="mt-1" style={bodyTextStyle}>{item.description}</p>
+            )}
+          </div>
+        ))}
+      </section>
+    </div>
+  );
+
   return (
     <div style={{ fontFamily: fonts.body }}>
       <header className="text-center mb-8">
@@ -94,6 +120,9 @@ export default function KlasickeTemplate({ data, designSettings }) {
           </div>
         ))}
       </section>
+
+      {/* Custom Sections */}
+      {data.customSections && data.customSections.map(renderCustomSection)}
     </div>
   );
 }

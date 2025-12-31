@@ -22,6 +22,32 @@ export default function ProfesionalniTemplate({ data, designSettings }) {
     color: colors.textSecondary
   };
 
+  const renderCustomSection = (section) => (
+    <section key={section.id} style={sectionStyle}>
+      <h2 className="text-2xl font-bold mb-4" style={headingStyle}>{section.title}</h2>
+      {section.items && section.items.map((item) => (
+        <div key={item.id} className="mb-6">
+          <div className="flex justify-between items-start mb-1">
+            <h3 className="font-bold text-lg" style={secondaryTextStyle}>{item.title}</h3>
+            {(item.startDate || item.endDate) && (
+              <span className="text-sm px-2 py-1 rounded" style={{ backgroundColor: colors.background, color: colors.textSecondary }}>
+                {item.startDate && formatDate(item.startDate)}
+                {item.startDate && item.endDate && ' - '}
+                {item.endDate ? formatDate(item.endDate) : (item.startDate ? 'Současnost' : '')}
+              </span>
+            )}
+          </div>
+          {item.subTitle && (
+            <div className="font-medium mb-2" style={secondaryTextStyle}>{item.subTitle}</div>
+          )}
+          {item.description && (
+            <p style={bodyTextStyle}>{item.description}</p>
+          )}
+        </div>
+      ))}
+    </section>
+  );
+
   return (
     <div style={{ fontFamily: fonts.body }}>
       <div className="flex flex-wrap">
@@ -87,7 +113,7 @@ export default function ProfesionalniTemplate({ data, designSettings }) {
             ))}
           </section>
           
-          <section>
+          <section style={sectionStyle}>
             <h2 className="text-2xl font-bold mb-4" style={headingStyle}>Vzdělání</h2>
             {data.education.map((edu) => (
               <div key={edu.id} className="mb-6">
@@ -102,6 +128,9 @@ export default function ProfesionalniTemplate({ data, designSettings }) {
               </div>
             ))}
           </section>
+
+          {/* Custom Sections */}
+          {data.customSections && data.customSections.map(renderCustomSection)}
         </div>
       </div>
     </div>

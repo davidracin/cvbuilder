@@ -170,6 +170,38 @@ const createStyles = (designSettings) => {
 export default function ProfesionalniTemplatePDF({ data, designSettings }) {
   const styles = createStyles(designSettings);
 
+  // Render custom section
+  const renderCustomSection = (section) => (
+    <View key={section.id} style={styles.section}>
+      <Text style={styles.sectionTitle}>{section.title}</Text>
+      {section.items && section.items.map((item, index) => (
+        <View key={item.id} style={styles.itemContainer}>
+          <View style={styles.itemHeader}>
+            <Text style={styles.itemTitle}>{item.title}</Text>
+            {(item.startDate || item.endDate) && (
+              <View style={styles.itemDateBadge}>
+                <Text style={styles.itemDate}>
+                  {item.startDate && formatDate(item.startDate)}
+                  {item.startDate && item.endDate && ' - '}
+                  {item.endDate ? formatDate(item.endDate) : (item.startDate ? 'Současnost' : '')}
+                </Text>
+              </View>
+            )}
+          </View>
+          {item.subTitle && (
+            <Text style={styles.itemSubtitle}>{item.subTitle}</Text>
+          )}
+          {item.description && (
+            <Text style={styles.itemDescription}>{item.description}</Text>
+          )}
+          {index < section.items.length - 1 && (
+            <View style={styles.separator} />
+          )}
+        </View>
+      ))}
+    </View>
+  );
+
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -269,6 +301,9 @@ export default function ProfesionalniTemplatePDF({ data, designSettings }) {
               </View>
             ))}
           </View>
+
+          {/* Custom Sections */}
+          {data.customSections && data.customSections.map(renderCustomSection)}
         </View>
       </Page>
     </Document>

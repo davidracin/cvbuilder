@@ -22,6 +22,39 @@ export default function KreativniTemplate({ data, designSettings }) {
     color: colors.textSecondary
   };
 
+  const renderCustomSection = (section) => (
+    <section key={section.id} style={sectionStyle}>
+      <h2 className="text-xl font-bold flex items-center mb-4" style={headingStyle}>
+        <span className="w-8 h-8 mr-2 flex items-center justify-center rounded-full" style={{ backgroundColor: colors.accent, color: '#ffffff' }}>
+          ✦
+        </span>
+        {section.title}
+      </h2>
+      <div className="space-y-6">
+        {section.items && section.items.map((item) => (
+          <div key={item.id} className="p-5 rounded-lg shadow-sm" style={{ backgroundColor: '#ffffff' }}>
+            <div className="flex justify-between flex-wrap">
+              <h3 className="font-bold text-lg" style={secondaryTextStyle}>{item.title}</h3>
+              {(item.startDate || item.endDate) && (
+                <span className="font-medium" style={secondaryTextStyle}>
+                  {item.startDate && formatDate(item.startDate)}
+                  {item.startDate && item.endDate && ' - '}
+                  {item.endDate ? formatDate(item.endDate) : (item.startDate ? 'Současnost' : '')}
+                </span>
+              )}
+            </div>
+            {item.subTitle && (
+              <div className="font-medium" style={secondaryTextStyle}>{item.subTitle}</div>
+            )}
+            {item.description && (
+              <p className="mt-2" style={bodyTextStyle}>{item.description}</p>
+            )}
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+
   return (
     <div style={{ fontFamily: fonts.body, backgroundColor: colors.background }} className="p-6 rounded-lg">
       <header className="flex flex-wrap items-center justify-between mb-8">
@@ -147,6 +180,9 @@ export default function KreativniTemplate({ data, designSettings }) {
           </div>
         </section>
       </div>
+
+      {/* Custom Sections */}
+      {data.customSections && data.customSections.map(renderCustomSection)}
     </div>
   );
 }
