@@ -1,4 +1,5 @@
-import { formatDate } from "@/lib/utils";
+import { formatDate, formatDateFull } from "@/lib/utils";
+import { Mail, Phone, MapPin, Briefcase, GraduationCap, Wrench, Languages, Star, Calendar } from "lucide-react";
 
 export default function KreativniTemplate({ data, designSettings }) {
   const { colors, fonts, spacing } = designSettings;
@@ -26,7 +27,7 @@ export default function KreativniTemplate({ data, designSettings }) {
     <section key={section.id} style={sectionStyle}>
       <h2 className="text-xl font-bold flex items-center mb-4" style={headingStyle}>
         <span className="w-8 h-8 mr-2 flex items-center justify-center rounded-full" style={{ backgroundColor: colors.accent, color: '#ffffff' }}>
-          ✦
+          <Star size={16} />
         </span>
         {section.title}
       </h2>
@@ -65,25 +66,39 @@ export default function KreativniTemplate({ data, designSettings }) {
           <p className="text-lg mt-1" style={secondaryTextStyle}>{data.personal.title}</p>
         </div>
         
-        <div className="mt-3 md:mt-0 text-sm">
-          <div className="flex items-center mb-1">
-            <span className="w-5 h-5 mr-2 flex items-center justify-center rounded-full" style={{ backgroundColor: colors.accent, color: '#ffffff' }}>
-              ✉
-            </span>
-            <span style={bodyTextStyle}>{data.personal.email}</span>
-          </div>
-          <div className="flex items-center mb-1">
-            <span className="w-5 h-5 mr-2 flex items-center justify-center rounded-full" style={{ backgroundColor: colors.accent, color: '#ffffff' }}>
-              ✆
-            </span>
-            <span style={bodyTextStyle}>{data.personal.phone}</span>
-          </div>
-          <div className="flex items-center">
-            <span className="w-5 h-5 mr-2 flex items-center justify-center rounded-full" style={{ backgroundColor: colors.accent, color: '#ffffff' }}>
-              ⌂
-            </span>
-            <span style={bodyTextStyle}>{data.personal.address}</span>
-          </div>
+        <div className="mt-3 md:mt-0 text-sm flex flex-col items-start">
+          {data.personal.email && (
+            <div className="flex items-center mb-1">
+              <span className="w-5 h-5 mr-2 flex items-center justify-center rounded-full flex-shrink-0" style={{ backgroundColor: colors.accent, color: '#ffffff' }}>
+                <Mail size={12} />
+              </span>
+              <span style={bodyTextStyle}>{data.personal.email}</span>
+            </div>
+          )}
+          {data.personal.phone && (
+            <div className="flex items-center mb-1">
+              <span className="w-5 h-5 mr-2 flex items-center justify-center rounded-full flex-shrink-0" style={{ backgroundColor: colors.accent, color: '#ffffff' }}>
+                <Phone size={12} />
+              </span>
+              <span style={bodyTextStyle}>{data.personal.phone}</span>
+            </div>
+          )}
+          {data.personal.address && (
+            <div className="flex items-center mb-1">
+              <span className="w-5 h-5 mr-2 flex items-center justify-center rounded-full flex-shrink-0" style={{ backgroundColor: colors.accent, color: '#ffffff' }}>
+                <MapPin size={12} />
+              </span>
+              <span style={bodyTextStyle}>{data.personal.address}</span>
+            </div>
+          )}
+          {data.personal.dateOfBirth && (
+            <div className="flex items-center">
+              <span className="w-5 h-5 mr-2 flex items-center justify-center rounded-full flex-shrink-0" style={{ backgroundColor: colors.accent, color: '#ffffff' }}>
+                <Calendar size={12} />
+              </span>
+              <span style={bodyTextStyle}>{formatDateFull(data.personal.dateOfBirth)}</span>
+            </div>
+          )}
         </div>
       </header>
       
@@ -95,7 +110,7 @@ export default function KreativniTemplate({ data, designSettings }) {
       <section style={sectionStyle}>
         <h2 className="text-xl font-bold flex items-center mb-4" style={headingStyle}>
           <span className="w-8 h-8 mr-2 flex items-center justify-center rounded-full" style={{ backgroundColor: colors.accent, color: '#ffffff' }}>
-            ★
+            <Briefcase size={16} />
           </span>
           Pracovní zkušenosti
         </h2>
@@ -119,7 +134,7 @@ export default function KreativniTemplate({ data, designSettings }) {
       <section style={sectionStyle}>
         <h2 className="text-xl font-bold flex items-center mb-4" style={headingStyle}>
           <span className="w-8 h-8 mr-2 flex items-center justify-center rounded-full" style={{ backgroundColor: colors.accent, color: '#ffffff' }}>
-            ✎
+            <GraduationCap size={16} />
           </span>
           Vzdělání
         </h2>
@@ -144,7 +159,7 @@ export default function KreativniTemplate({ data, designSettings }) {
         <section className="w-full md:w-1/2 md:pr-4" style={sectionStyle}>
           <h2 className="text-xl font-bold flex items-center mb-4" style={headingStyle}>
             <span className="w-8 h-8 mr-2 flex items-center justify-center rounded-full" style={{ backgroundColor: colors.accent, color: '#ffffff' }}>
-              ⚙
+              <Wrench size={16} />
             </span>
             Dovednosti
           </h2>
@@ -164,7 +179,7 @@ export default function KreativniTemplate({ data, designSettings }) {
         <section className="w-full md:w-1/2 md:pl-4" style={sectionStyle}>
           <h2 className="text-xl font-bold flex items-center mb-4" style={headingStyle}>
             <span className="w-8 h-8 mr-2 flex items-center justify-center rounded-full" style={{ backgroundColor: colors.accent, color: '#ffffff' }}>
-              🗣
+              <Languages size={16} />
             </span>
             Jazyky
           </h2>

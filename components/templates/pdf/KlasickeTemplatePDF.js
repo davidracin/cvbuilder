@@ -168,7 +168,7 @@ export default function KlasickeTemplatePDF({ data, designSettings }) {
           <Text style={styles.name}>{data.personal.name}</Text>
           <Text style={styles.title}>{data.personal.title}</Text>
           <Text style={styles.contactInfo}>
-            {data.personal.email} | {data.personal.phone}
+            {[data.personal.email, data.personal.phone].filter(Boolean).join(' | ')}
           </Text>
           <Text style={styles.contactInfo}>{data.personal.address}</Text>
           {data.personal.dateOfBirth && (
@@ -176,6 +176,26 @@ export default function KlasickeTemplatePDF({ data, designSettings }) {
               Datum narození: {formatDateFull(data.personal.dateOfBirth)}
             </Text>
           )}
+        </View>
+
+        <View style={styles.divider} />
+
+        {/* Work Experience Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Pracovní zkušenosti</Text>
+          {data.experience.map((exp) => (
+            <View key={exp.id} style={styles.itemContainer}>
+              <Text style={styles.itemTitle}>
+                {exp.title}, {exp.company}
+              </Text>
+              <Text style={styles.itemDate}>
+                {formatDate(exp.startDate)} - {exp.endDate ? formatDate(exp.endDate) : 'Současnost'}
+              </Text>
+              {exp.description && (
+                <Text style={styles.itemDescription}>{exp.description}</Text>
+              )}
+            </View>
+          ))}
         </View>
 
         <View style={styles.divider} />
@@ -225,26 +245,6 @@ export default function KlasickeTemplatePDF({ data, designSettings }) {
               </View>
             ))}
           </View>
-        </View>
-
-        <View style={styles.divider} />
-
-        {/* Work Experience Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Pracovní zkušenosti</Text>
-          {data.experience.map((exp) => (
-            <View key={exp.id} style={styles.itemContainer}>
-              <Text style={styles.itemTitle}>
-                {exp.title}, {exp.company}
-              </Text>
-              <Text style={styles.itemDate}>
-                {formatDate(exp.startDate)} - {exp.endDate ? formatDate(exp.endDate) : 'Současnost'}
-              </Text>
-              {exp.description && (
-                <Text style={styles.itemDescription}>{exp.description}</Text>
-              )}
-            </View>
-          ))}
         </View>
 
         {/* Custom Sections */}

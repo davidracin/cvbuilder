@@ -16,6 +16,17 @@ const formatDate = (isoDate) => {
   }
 };
 
+const formatDateFull = (isoDate) => {
+  if (!isoDate) return "";
+  try {
+    const date = new Date(isoDate);
+    const months = ['ledna', 'února', 'března', 'dubna', 'května', 'června', 'července', 'srpna', 'září', 'října', 'listopadu', 'prosince'];
+    return `${date.getDate()}. ${months[date.getMonth()]} ${date.getFullYear()}`;
+  } catch {
+    return isoDate;
+  }
+};
+
 // Create styles based on designSettings
 const createStyles = (designSettings) => {
   const { colors, fonts, spacing } = designSettings;
@@ -32,22 +43,22 @@ const createStyles = (designSettings) => {
     // Left sidebar styles
     sidebar: {
       width: '33%',
-      backgroundColor: colors.primary,
-      paddingHorizontal: 20,
-      paddingVertical: 30,
+      backgroundColor: colors.sidebar || colors.primary,
+      paddingHorizontal: 15,
+      paddingVertical: 25,
       minHeight: '100%',
     },
     sidebarName: {
       fontSize: 18,
       fontWeight: 'bold',
       fontFamily: headingFont,
-      color: '#ffffff',
+      color: colors.sidebarText || '#ffffff',
       textAlign: 'center',
       marginBottom: 4,
     },
     sidebarTitle: {
       fontSize: 11,
-      color: 'rgba(255, 255, 255, 0.8)',
+      color: colors.sidebarText ? `${colors.sidebarText}cc` : 'rgba(255, 255, 255, 0.8)',
       textAlign: 'center',
       marginBottom: 20,
     },
@@ -58,7 +69,7 @@ const createStyles = (designSettings) => {
       fontSize: 12,
       fontWeight: 'bold',
       fontFamily: headingFont,
-      color: '#ffffff',
+      color: colors.sidebarText || '#ffffff',
       borderBottomWidth: 1,
       borderBottomColor: colors.accent,
       paddingBottom: 6,
@@ -66,13 +77,13 @@ const createStyles = (designSettings) => {
     },
     sidebarText: {
       fontSize: 10,
-      color: '#ffffff',
+      color: colors.sidebarText || '#ffffff',
       marginBottom: 4,
       lineHeight: 1.4,
     },
     sidebarListItem: {
       fontSize: 10,
-      color: '#ffffff',
+      color: colors.sidebarText || '#ffffff',
       marginBottom: 6,
     },
     sidebarBulletDot: {
@@ -93,12 +104,12 @@ const createStyles = (designSettings) => {
     },
     languageName: {
       fontSize: 10,
-      color: '#ffffff',
+      color: colors.sidebarText || '#ffffff',
       fontWeight: 'bold',
     },
     languageLevel: {
       fontSize: 9,
-      color: 'rgba(255, 255, 255, 0.7)',
+      color: colors.sidebarText ? `${colors.sidebarText}b3` : 'rgba(255, 255, 255, 0.7)',
     },
     // Right content styles
     content: {
@@ -114,6 +125,9 @@ const createStyles = (designSettings) => {
       fontWeight: 'bold',
       fontFamily: headingFont,
       color: colors.primary,
+      borderBottomWidth: 2,
+      borderBottomColor: colors.accent,
+      paddingBottom: 6,
       marginBottom: 12,
     },
     paragraph: {
@@ -219,6 +233,9 @@ export default function ProfesionalniTemplatePDF({ data, designSettings }) {
             <Text style={styles.sidebarText}>{data.personal.email}</Text>
             <Text style={styles.sidebarText}>{data.personal.phone}</Text>
             <Text style={styles.sidebarText}>{data.personal.address}</Text>
+            {data.personal.dateOfBirth && (
+              <Text style={styles.sidebarText}>{formatDateFull(data.personal.dateOfBirth)}</Text>
+            )}
           </View>
 
           {/* Skills Section */}

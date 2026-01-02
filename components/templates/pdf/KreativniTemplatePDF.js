@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, Svg, Path, Circle } from '@react-pdf/renderer';
 import { getPDFFont } from '@/lib/pdfFonts';
 
 // Helper function for date formatting
@@ -16,17 +16,105 @@ const formatDate = (isoDate) => {
   }
 };
 
-// Icon component using SVG circles
-const IconBadge = ({ color }) => (
-  <View style={{ width: 20, height: 20, marginRight: 8, borderRadius: 10, backgroundColor: color, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-    <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: '#ffffff' }} />
+const formatDateFull = (isoDate) => {
+  if (!isoDate) return "";
+  try {
+    const date = new Date(isoDate);
+    const months = ['ledna', 'února', 'března', 'dubna', 'května', 'června', 'července', 'srpna', 'září', 'října', 'listopadu', 'prosince'];
+    return `${date.getDate()}. ${months[date.getMonth()]} ${date.getFullYear()}`;
+  } catch {
+    return isoDate;
+  }
+};
+
+// SVG Icon components for PDF
+const MailIcon = ({ color, size = 10 }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24">
+    <Path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" fill="none" stroke={color} strokeWidth={3}/>
+    <Path d="M22 6l-10 7L2 6" fill="none" stroke={color} strokeWidth={3}/>
+  </Svg>
+);
+
+const PhoneIcon = ({ color, size = 10 }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24">
+    <Path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z" fill="none" stroke={color} strokeWidth={3}/>
+  </Svg>
+);
+
+const MapPinIcon = ({ color, size = 10 }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24">
+    <Path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" fill="none" stroke={color} strokeWidth={3}/>
+    <Circle cx={12} cy={10} r={3} fill="none" stroke={color} strokeWidth={3}/>
+  </Svg>
+);
+
+const CalendarIcon = ({ color, size = 10 }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24">
+    <Path d="M19 4H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2z" fill="none" stroke={color} strokeWidth={3}/>
+    <Path d="M16 2v4M8 2v4M3 10h18" fill="none" stroke={color} strokeWidth={3}/>
+  </Svg>
+);
+
+const BriefcaseIcon = ({ color, size = 12 }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24">
+    <Path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z" fill="none" stroke={color} strokeWidth={3}/>
+    <Path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16" fill="none" stroke={color} strokeWidth={3}/>
+  </Svg>
+);
+
+const GraduationCapIcon = ({ color, size = 12 }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24">
+    <Path d="M22 10l-10-5L2 10l10 5 10-5z" fill="none" stroke={color} strokeWidth={3}/>
+    <Path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5" fill="none" stroke={color} strokeWidth={3}/>
+  </Svg>
+);
+
+const WrenchIcon = ({ color, size = 12 }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24">
+    <Path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" fill="none" stroke={color} strokeWidth={3}/>
+  </Svg>
+);
+
+const LanguagesIcon = ({ color, size = 12 }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24">
+    <Path d="M5 8l6 6M4 14l6-6 2-3M2 5h12M7 2h1" fill="none" stroke={color} strokeWidth={3}/>
+    <Path d="M22 22l-5-10-5 10M14 18h6" fill="none" stroke={color} strokeWidth={3}/>
+  </Svg>
+);
+
+const StarIcon = ({ color, size = 12 }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24">
+    <Path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="none" stroke={color} strokeWidth={3}/>
+  </Svg>
+);
+
+// Icon badge wrapper for contact icons
+const IconBadge = ({ color, children }) => (
+  <View style={{ 
+    width: 20, 
+    height: 20, 
+    marginRight: 8, 
+    borderRadius: 10, 
+    backgroundColor: color,
+    alignItems: 'center',
+    justifyContent: 'center',
+  }}>
+    {children}
   </View>
 );
 
 // Section icon badge (larger)
-const SectionIconBadge = ({ color }) => (
-  <View style={{ width: 24, height: 24, marginRight: 8, borderRadius: 12, backgroundColor: color, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-    <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: '#ffffff' }} />
+const SectionIconBadge = ({ color, children }) => (
+  <View style={{ 
+    width: 24, 
+    height: 24, 
+    marginRight: 8, 
+    borderRadius: 12, 
+    backgroundColor: color,
+    alignItems: 'center',
+    justifyContent: 'center',
+  }}>
+    {children}
   </View>
 );
 
@@ -45,14 +133,13 @@ const createStyles = (designSettings) => {
     header: {
       flexDirection: 'row',
       justifyContent: 'space-between',
-      marginBottom: 20,
-      paddingBottom: 15,
+      marginBottom: 8,
     },
     headerLeft: {
       flex: 1,
     },
     headerRight: {
-      alignItems: 'flex-end',
+      alignItems: 'flex-start',
     },
     name: {
       fontSize: 24,
@@ -177,7 +264,9 @@ export default function KreativniTemplatePDF({ data, designSettings }) {
   const renderCustomSection = (section) => (
     <View key={section.id} style={styles.section}>
       <View style={styles.sectionHeader}>
-        <SectionIconBadge color={colors.accent} />
+        <SectionIconBadge color={colors.accent}>
+          <StarIcon color="#ffffff" size={12} />
+        </SectionIconBadge>
         <Text style={styles.sectionTitle}>{section.title}</Text>
       </View>
       {section.items && section.items.map((item) => (
@@ -213,18 +302,38 @@ export default function KreativniTemplatePDF({ data, designSettings }) {
             <Text style={styles.title}>{data.personal.title}</Text>
           </View>
           <View style={styles.headerRight}>
-            <View style={styles.contactRow}>
-              <IconBadge color={colors.accent} />
-              <Text style={styles.contactText}>{data.personal.email}</Text>
-            </View>
-            <View style={styles.contactRow}>
-              <IconBadge color={colors.accent} />
-              <Text style={styles.contactText}>{data.personal.phone}</Text>
-            </View>
-            <View style={styles.contactRow}>
-              <IconBadge color={colors.accent} />
-              <Text style={styles.contactText}>{data.personal.address}</Text>
-            </View>
+            {data.personal.email && (
+              <View style={styles.contactRow}>
+                <IconBadge color={colors.accent}>
+                  <MailIcon color="#ffffff" size={10} />
+                </IconBadge>
+                <Text style={styles.contactText}>{data.personal.email}</Text>
+              </View>
+            )}
+            {data.personal.phone && (
+              <View style={styles.contactRow}>
+                <IconBadge color={colors.accent}>
+                  <PhoneIcon color="#ffffff" size={10} />
+                </IconBadge>
+                <Text style={styles.contactText}>{data.personal.phone}</Text>
+              </View>
+            )}
+            {data.personal.address && (
+              <View style={styles.contactRow}>
+                <IconBadge color={colors.accent}>
+                  <MapPinIcon color="#ffffff" size={10} />
+                </IconBadge>
+                <Text style={styles.contactText}>{data.personal.address}</Text>
+              </View>
+            )}
+            {data.personal.dateOfBirth && (
+              <View style={styles.contactRow}>
+                <IconBadge color={colors.accent}>
+                  <CalendarIcon color="#ffffff" size={10} />
+                </IconBadge>
+                <Text style={styles.contactText}>{formatDateFull(data.personal.dateOfBirth)}</Text>
+              </View>
+            )}
           </View>
         </View>
 
@@ -239,7 +348,9 @@ export default function KreativniTemplatePDF({ data, designSettings }) {
         {/* Work Experience */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <SectionIconBadge color={colors.accent} />
+            <SectionIconBadge color={colors.accent}>
+              <BriefcaseIcon color="#ffffff" size={12} />
+            </SectionIconBadge>
             <Text style={styles.sectionTitle}>Pracovní zkušenosti</Text>
           </View>
           {data.experience.map((exp) => (
@@ -261,7 +372,9 @@ export default function KreativniTemplatePDF({ data, designSettings }) {
         {/* Education */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <SectionIconBadge color={colors.accent} />
+            <SectionIconBadge color={colors.accent}>
+              <GraduationCapIcon color="#ffffff" size={12} />
+            </SectionIconBadge>
             <Text style={styles.sectionTitle}>Vzdělání</Text>
           </View>
           {data.education.map((edu) => (
@@ -285,7 +398,9 @@ export default function KreativniTemplatePDF({ data, designSettings }) {
           {/* Skills */}
           <View style={styles.column}>
             <View style={styles.sectionHeader}>
-              <SectionIconBadge color={colors.accent} />
+              <SectionIconBadge color={colors.accent}>
+                <WrenchIcon color="#ffffff" size={12} />
+              </SectionIconBadge>
               <Text style={styles.sectionTitle}>Dovednosti</Text>
             </View>
             <View style={styles.itemCard}>
@@ -298,7 +413,9 @@ export default function KreativniTemplatePDF({ data, designSettings }) {
           {/* Languages */}
           <View style={styles.columnRight}>
             <View style={styles.sectionHeader}>
-              <SectionIconBadge color={colors.accent} />
+              <SectionIconBadge color={colors.accent}>
+                <LanguagesIcon color="#ffffff" size={12} />
+              </SectionIconBadge>
               <Text style={styles.sectionTitle}>Jazyky</Text>
             </View>
             <View style={styles.itemCard}>

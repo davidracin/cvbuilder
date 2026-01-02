@@ -55,13 +55,32 @@ export default function KlasickeTemplate({ data, designSettings }) {
         <p className="text-xl mt-1" style={secondaryTextStyle}>{data.personal.title}</p>
         
         <div className="mt-3 text-sm" style={secondaryTextStyle}>
-          <div>{data.personal.email} | {data.personal.phone}</div>
+          <div>
+            {[data.personal.email, data.personal.phone]
+              .filter(field => field && field.trim())
+              .join(' | ')}
+          </div>
           <div>{data.personal.address}</div>
           {data.personal.dateOfBirth && (
             <div>Datum narození: {formatDateFull(data.personal.dateOfBirth)}</div>
           )}
         </div>
       </header>
+      
+      <hr className="my-4" style={{ borderColor: colors.accent }} />
+      
+      <section style={sectionStyle}>
+        <h2 className="text-xl font-bold uppercase tracking-wider mb-3" style={headingStyle}>Pracovní zkušenosti</h2>
+        {data.experience.map((exp) => (
+          <div key={exp.id} className="mb-4">
+            <div className="font-bold" style={secondaryTextStyle}>{exp.title}, {exp.company}</div>
+            <div className="italic" style={secondaryTextStyle}>
+              {formatDate(exp.startDate)} - {exp.endDate ? formatDate(exp.endDate) : 'Současnost'}
+            </div>
+            <p className="mt-1" style={bodyTextStyle}>{exp.description}</p>
+          </div>
+        ))}
+      </section>
       
       <hr className="my-4" style={{ borderColor: colors.accent }} />
       
@@ -105,21 +124,6 @@ export default function KlasickeTemplate({ data, designSettings }) {
           </ul>
         </section>
       </div>
-      
-      <hr className="my-4" style={{ borderColor: colors.accent }} />
-      
-      <section style={sectionStyle}>
-        <h2 className="text-xl font-bold uppercase tracking-wider mb-3" style={headingStyle}>Pracovní zkušenosti</h2>
-        {data.experience.map((exp) => (
-          <div key={exp.id} className="mb-4">
-            <div className="font-bold" style={secondaryTextStyle}>{exp.title}, {exp.company}</div>
-            <div className="italic" style={secondaryTextStyle}>
-              {formatDate(exp.startDate)} - {exp.endDate ? formatDate(exp.endDate) : 'Současnost'}
-            </div>
-            <p className="mt-1" style={bodyTextStyle}>{exp.description}</p>
-          </div>
-        ))}
-      </section>
 
       {/* Custom Sections */}
       {data.customSections && data.customSections.map(renderCustomSection)}

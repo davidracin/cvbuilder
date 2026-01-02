@@ -157,6 +157,23 @@ export default function DesignTab({
               onChange={(value) => onUpdateDesignSettings("colors", "background", value)}
               description="Základní barva pozadí dokumentu"
             />
+            
+            {templateName === 'profesionalni' && (
+              <>
+                <ColorPicker
+                  label="Barva postranního panelu"
+                  value={colors.sidebar || colors.primary}
+                  onChange={(value) => onUpdateDesignSettings("colors", "sidebar", value)}
+                  description="Barva pozadí levého postranního panelu"
+                />
+                <ColorPicker
+                  label="Text postranního panelu"
+                  value={colors.sidebarText || '#ffffff'}
+                  onChange={(value) => onUpdateDesignSettings("colors", "sidebarText", value)}
+                  description="Barva textu v postranním panelu"
+                />
+              </>
+            )}
           </AccordionContent>
         </AccordionItem>
 
