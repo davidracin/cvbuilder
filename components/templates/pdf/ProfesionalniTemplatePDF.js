@@ -63,7 +63,7 @@ const createStyles = (designSettings) => {
       marginBottom: 20,
     },
     sidebarSection: {
-      marginBottom: 20,
+      marginBottom: 32,
     },
     sidebarSectionTitle: {
       fontSize: 12,
@@ -72,8 +72,8 @@ const createStyles = (designSettings) => {
       color: colors.sidebarText || '#ffffff',
       borderBottomWidth: 1,
       borderBottomColor: colors.accent,
-      paddingBottom: 6,
-      marginBottom: 10,
+      paddingBottom: 8,
+      marginBottom: 12,
     },
     sidebarText: {
       fontSize: 10,
@@ -127,8 +127,8 @@ const createStyles = (designSettings) => {
       color: colors.primary,
       borderBottomWidth: 2,
       borderBottomColor: colors.accent,
-      paddingBottom: 6,
-      marginBottom: 12,
+      paddingBottom: 8,
+      marginBottom: 16,
     },
     paragraph: {
       fontSize: 10,
@@ -136,7 +136,7 @@ const createStyles = (designSettings) => {
       lineHeight: 1.5,
     },
     itemContainer: {
-      marginBottom: 14,
+      marginBottom: 16,
     },
     itemHeader: {
       flexDirection: 'row',
@@ -164,7 +164,7 @@ const createStyles = (designSettings) => {
       fontSize: 10,
       fontWeight: 'bold',
       color: colors.textSecondary,
-      marginBottom: 4,
+      marginBottom: 8,
     },
     itemDescription: {
       fontSize: 10,

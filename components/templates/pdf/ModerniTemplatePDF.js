@@ -57,7 +57,7 @@ const createStyles = (designSettings) => {
     contactRow: {
       flexDirection: 'row',
       flexWrap: 'wrap',
-      marginTop: 8,
+      marginTop: 12,
     },
     contactItem: {
       fontSize: 10,
@@ -80,10 +80,10 @@ const createStyles = (designSettings) => {
       borderBottomWidth: 1,
       borderBottomColor: colors.accent,
       paddingBottom: 4,
-      marginBottom: 10,
+      marginBottom: 12,
     },
     itemContainer: {
-      marginBottom: 12,
+      marginBottom: 16,
     },
     itemHeader: {
       flexDirection: 'row',
@@ -110,6 +110,7 @@ const createStyles = (designSettings) => {
       fontSize: 10,
       color: colors.text,
       lineHeight: 1.4,
+      marginTop: 4,
     },
     columnsContainer: {
       flexDirection: 'row',

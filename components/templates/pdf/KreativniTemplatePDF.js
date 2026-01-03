@@ -133,7 +133,7 @@ const createStyles = (designSettings) => {
     header: {
       flexDirection: 'row',
       justifyContent: 'space-between',
-      marginBottom: 8,
+      marginBottom: 32,
     },
     headerLeft: {
       flex: 1,
@@ -163,7 +163,7 @@ const createStyles = (designSettings) => {
     },
     card: {
       backgroundColor: '#ffffff',
-      padding: 15,
+      padding: 20,
       borderRadius: 8,
       marginBottom: spacing.section,
     },
@@ -173,19 +173,20 @@ const createStyles = (designSettings) => {
     sectionHeader: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginBottom: 10,
+      marginBottom: 16,
     },
     sectionTitle: {
       fontSize: 14,
       fontWeight: 'bold',
       fontFamily: headingFont,
       color: colors.primary,
+      marginBottom: 12,
     },
     itemCard: {
       backgroundColor: '#ffffff',
-      padding: 12,
+      padding: 20,
       borderRadius: 6,
-      marginBottom: 8,
+      marginBottom: 24,
     },
     itemHeader: {
       flexDirection: 'row',
@@ -213,6 +214,7 @@ const createStyles = (designSettings) => {
       fontSize: 10,
       color: colors.text,
       lineHeight: 1.4,
+      marginTop: 8,
     },
     columnsContainer: {
       flexDirection: 'row',
@@ -341,7 +343,7 @@ export default function KreativniTemplatePDF({ data, designSettings }) {
         {data.personal.about && (
           <View style={styles.card}>
             <Text style={styles.sectionTitle}>O mně</Text>
-            <Text style={[styles.itemDescription, { marginTop: 8 }]}>{data.personal.about}</Text>
+            <Text style={styles.itemDescription}>{data.personal.about}</Text>
           </View>
         )}
 

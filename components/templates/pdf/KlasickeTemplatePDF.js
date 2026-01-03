@@ -41,7 +41,7 @@ const createStyles = (designSettings) => {
     },
     header: {
       textAlign: 'center',
-      marginBottom: 20,
+      marginBottom: 32,
     },
     name: {
       fontSize: 24,
@@ -63,7 +63,7 @@ const createStyles = (designSettings) => {
     divider: {
       borderBottomWidth: 1,
       borderBottomColor: colors.accent,
-      marginVertical: 12,
+      marginVertical: 8,
     },
     section: {
       marginBottom: spacing.section,
@@ -75,10 +75,10 @@ const createStyles = (designSettings) => {
       color: colors.primary,
       textTransform: 'uppercase',
       letterSpacing: 1,
-      marginBottom: 10,
+      marginBottom: 12,
     },
     itemContainer: {
-      marginBottom: 10,
+      marginBottom: 16,
     },
     itemTitle: {
       fontSize: 11,
@@ -95,6 +95,7 @@ const createStyles = (designSettings) => {
       fontSize: 10,
       color: colors.text,
       lineHeight: 1.4,
+      marginTop: 4,
     },
     columnsContainer: {
       flexDirection: 'row',
