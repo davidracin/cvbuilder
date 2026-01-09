@@ -14,6 +14,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { signUp, auth } from "@/lib/firebaseAuth"
 import { validatePassword } from "firebase/auth"
+import Image from "next/image"
 
 export function SignupForm({
   className,
@@ -168,9 +169,10 @@ export function SignupForm({
             </FieldGroup>
           </form>
           <div className="bg-muted relative hidden md:block">
-            <img
-              src="/placeholder.svg"
+            <Image
+              src="/account-image.jpg"
               alt="Image"
+              fill
               className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale" />
           </div>
         </CardContent>

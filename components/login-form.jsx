@@ -13,6 +13,8 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { signIn } from "@/lib/firebaseAuth"
+import Link from "next/link"
+import Image from "next/image"
 
 function LoginFormContent({
   className,
@@ -71,7 +73,15 @@ function LoginFormContent({
                 />
               </Field>
               <Field>
-                <FieldLabel htmlFor="password">Heslo</FieldLabel>
+                <div className="flex items-center">
+                  <FieldLabel htmlFor="password">Heslo</FieldLabel>
+                  <Link
+                    href="/forgot-password"
+                    className="ml-auto text-sm underline-offset-2 hover:underline"
+                  >
+                    Zapomněli jste heslo?
+                  </Link>
+                </div>
                 <Input 
                   id="password" 
                   type="password"
@@ -86,14 +96,15 @@ function LoginFormContent({
                 </Button>
               </Field>
               <FieldDescription className="text-center">
-                Nemáte účet? <a href="/signup">Registrovat se</a>
+                Nemáte účet? <Link href="/signup">Registrovat se</Link>
               </FieldDescription>
             </FieldGroup>
           </form>
           <div className="bg-muted relative hidden md:block">
-            <img
-              src="/placeholder.svg"
+            <Image
+              src="/account-image.jpg"
               alt="Image"
+              fill
               className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale" />
           </div>
         </CardContent>
