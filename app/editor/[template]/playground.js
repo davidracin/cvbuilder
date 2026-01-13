@@ -85,6 +85,12 @@ export default function EditorPage() {
       return;
     }
 
+    // Check if user's email is verified
+    if (!user.emailVerified) {
+      addToast('Pro uložení CV musíte nejprve ověřit svůj email. Zkontrolujte svou emailovou schránku nebo přejděte do nastavení pro opětovné odeslání ověřovacího emailu.', 'error');
+      return;
+    }
+
     setSaving(true);
 
     let savedCvId = cvId;

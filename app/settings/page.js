@@ -14,7 +14,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { auth } from "@/lib/firebaseAuth";
-import { validatePassword, updateEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth";
+import { resendVerificationEmail } from "@/lib/firebaseAuth";
+import { validatePassword, verifyBeforeUpdateEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth";
 import { getUserProfile, updateUserProfile } from "@/lib/firestoreUsers";
 
 export default function SettingsPage() {
@@ -42,6 +43,11 @@ export default function SettingsPage() {
   const [passwordLoading, setPasswordLoading] = useState(false);
   const [passwordSuccess, setPasswordSuccess] = useState('');
   const [passwordError, setPasswordError] = useState('');
+
+  // Email verification state
+  const [verificationLoading, setVerificationLoading] = useState(false);
+  const [verificationSuccess, setVerificationSuccess] = useState('');
+  const [verificationError, setVerificationError] = useState('');
 
   // Load user profile data from Firestore
   useEffect(() => {
@@ -106,6 +112,22 @@ export default function SettingsPage() {
     }
   };
 
+  const handleResendVerification = async () => {
+    setVerificationError('');
+    setVerificationSuccess('');
+    setVerificationLoading(true);
+
+    const { error } = await resendVerificationEmail();
+    
+    if (error) {
+      setVerificationError(error);
+    } else {
+      setVerificationSuccess('Ověřovací email byl odeslán. Zkontrolujte svou schránku.');
+    }
+    
+    setVerificationLoading(false);
+  };
+
   const handleEmailChange = async (e) => {
     e.preventDefault();
     setEmailError('');
@@ -117,10 +139,11 @@ export default function SettingsPage() {
       const credential = EmailAuthProvider.credential(user.email, emailPassword);
       await reauthenticateWithCredential(user, credential);
       
-      // Update email
-      await updateEmail(user, newEmail);
+      // Send verification email to new address before changing
+      // The email will only be changed after the user verifies the new address
+      await verifyBeforeUpdateEmail(user, newEmail);
       
-      setEmailSuccess('Email byl úspěšně změněn!');
+      setEmailSuccess('Na novou adresu byl odeslán ověřovací email. Po jeho potvrzení bude email změněn.');
       setEmailLoading(false);
       setNewEmail('');
       setEmailPassword('');
@@ -230,6 +253,39 @@ export default function SettingsPage() {
         </div>
 
         <div className="space-y-6">
+          {/* Email Verification Status Card */}
+          {user && !user.emailVerified && (
+            <Card className="border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20">
+              <CardHeader>
+                <CardTitle className="text-amber-800 dark:text-amber-200 flex items-center gap-2">
+                  ⚠️ Email není ověřen
+                </CardTitle>
+                <CardDescription className="text-amber-700 dark:text-amber-300">
+                  Pro plné využití aplikace (ukládání CV) ověřte svůj email.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {verificationSuccess && (
+                  <div className="bg-green-50 text-green-600 p-3 rounded-md text-sm mb-3">
+                    {verificationSuccess}
+                  </div>
+                )}
+                {verificationError && (
+                  <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm mb-3">
+                    {verificationError}
+                  </div>
+                )}
+                <Button 
+                  onClick={handleResendVerification} 
+                  disabled={verificationLoading}
+                  variant="outline"
+                  className="border-amber-300 text-amber-800 hover:bg-amber-100 dark:border-amber-700 dark:text-amber-200 dark:hover:bg-amber-900/40"
+                >
+                  {verificationLoading ? 'Odesílání...' : 'Odeslat ověřovací email'}
+                </Button>
+              </CardContent>
+            </Card>
+          )}
           {/* Profile Information Card */}
           <Card>
             <CardHeader>
