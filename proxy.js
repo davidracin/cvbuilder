@@ -6,7 +6,7 @@ const protectedRoutes = ['/settings', '/templates'];
 // Define public routes
 const publicRoutes = ['/login', '/signup', '/'];
 
-export function middleware(request) {
+export function proxy(request) {
   const path = request.nextUrl.pathname;
   
   // Check if the current route is protected

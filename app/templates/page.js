@@ -22,24 +22,24 @@ export default function TemplatesPage() {
   const [deleteId, setDeleteId] = useState(null);
 
   useEffect(() => {
+    const loadCVs = async () => {
+      setLoading(true);
+      const { cvs: userCvs, error } = await getUserCVs(user.uid);
+      if (error) {
+        console.error('Error loading CVs:', error);
+      } else {
+        console.log('Loaded CVs:', userCvs);
+        setCvs(userCvs);
+      }
+      setLoading(false);
+    };
+
     if (!authLoading && !user) {
       router.push('/login');
     } else if (user) {
       loadCVs();
     }
   }, [user, authLoading, router]);
-
-  const loadCVs = async () => {
-    setLoading(true);
-    const { cvs: userCvs, error } = await getUserCVs(user.uid);
-    if (error) {
-      console.error('Error loading CVs:', error);
-    } else {
-      console.log('Loaded CVs:', userCvs);
-      setCvs(userCvs);
-    }
-    setLoading(false);
-  };
 
   const handleEdit = (cv) => {
     router.push(`/editor/${cv.templateType}?cvId=${cv.id}`);
