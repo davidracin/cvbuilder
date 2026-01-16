@@ -75,11 +75,13 @@ export default function Navbar() {
           {/* Logo and desktop navigation */}
           <div className="flex flex-1 items-center justify-center sm:items-center sm:justify-start">
             <div className="flex shrink-0 items-center">
-              <Link href="/" className="inline-block leading-none hover:opacity-80 transition-opacity">
-                <img 
+              <Link href="/" className="flex items-center hover:opacity-80 transition-opacity">
+                <Image 
                   src="/logo.svg" 
                   alt="CV Builder Logo" 
-                  className="h-34 w-auto block"
+                  width={130}
+                  height={137}
+                  priority
                 />
               </Link>
             </div>
