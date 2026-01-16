@@ -3,15 +3,14 @@ import { NextResponse } from 'next/server';
 // Define protected routes that require authentication
 const protectedRoutes = ['/settings', '/templates'];
 
-// Define public routes
-const publicRoutes = ['/login', '/signup', '/'];
+// Define public routes (no auth required)
+const publicRoutes = ['/', '/login', '/signup', '/forgot-password'];
 
 export function proxy(request) {
   const path = request.nextUrl.pathname;
   
   // Check if the current route is protected
   const isProtectedRoute = protectedRoutes.some(route => path.startsWith(route));
-  const isPublicRoute = publicRoutes.includes(path);
 
   // Get the auth token from cookies
   const authToken = request.cookies.get('authToken')?.value;
@@ -28,17 +27,17 @@ export function proxy(request) {
   return NextResponse.next();
 }
 
-// Configure which routes the middleware should run on
+// Configure which routes the proxy should run on
 export const config = {
   matcher: [
     /*
-     * Match all request paths except:
-     * - api routes (API routes)
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
      * - _next/static (static files)
      * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public files (public folder)
+     * - favicon.ico, sitemap.xml, robots.txt (metadata files)
+     * - public files (files with extensions like .svg, .png, etc.)
      */
-    '/((?!api|_next/static|_next/image|favicon.ico|.*\\..*|_next).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|.*\\..*|_next).*)',
   ],
 };

@@ -2,7 +2,6 @@
 
 import { Inter, Roboto, Open_Sans, Lato, Montserrat, Merriweather, Playfair_Display, Roboto_Mono } from "next/font/google";
 import "./globals.css";
-import "../styles/pdf-export.css";
 import Navbar from "@/components/Navbar";
 
 // Load all fonts used in CV templates with Czech character support
