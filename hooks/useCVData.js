@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { DEFAULT_CV_DATA, NEW_ITEM_TEMPLATES, TEMPLATE_DESIGN_DEFAULTS } from "../lib/constants";
 
 export function useCVData() {
@@ -209,7 +209,7 @@ export function useCVData() {
   };
 
   // Function to get merged design settings (user overrides + template defaults)
-  const getDesignSettings = (templateName) => {
+  const getDesignSettings = useCallback((templateName) => {
     const defaults = TEMPLATE_DESIGN_DEFAULTS[templateName] || TEMPLATE_DESIGN_DEFAULTS.moderni;
     if (!cvData.designSettings) {
       return defaults;
@@ -221,14 +221,19 @@ export function useCVData() {
       fonts: { ...defaults.fonts, ...cvData.designSettings.fonts },
       spacing: { ...defaults.spacing, ...cvData.designSettings.spacing }
     };
-  };
+  }, [cvData.designSettings]);
 
   // Function to load a complete CV from database
-  const loadCV = (newCvData, id, name) => {
-    setCvData(newCvData);
+  const loadCV = useCallback((newCvData, id, name) => {
+    // Ensure designSettings exists (for backwards compatibility with older CVs)
+    const dataWithDesignSettings = {
+      ...newCvData,
+      designSettings: newCvData.designSettings || {}
+    };
+    setCvData(dataWithDesignSettings);
     setCVId(id);
     setCVName(name);
-  };
+  }, []);
 
   return {
     cvData,

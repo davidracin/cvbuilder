@@ -1,15 +1,262 @@
 "use client";
-import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
-import dynamic from "next/dynamic";
-
-// Dynamically import the playground component to prevent any SSR issues
-const EditorPlayground = dynamic(() => import("./playground"), {
-  ssr: false,
-});
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { useParams, useSearchParams, useRouter } from "next/navigation";
+import { exportToPDF } from "../../../lib/pdfExportNew";
+import { useToast } from "../../../components/Toast";
+import { useCVData } from "../../../hooks/useCVData";
+import { useAuth } from "../../../hooks/useAuth";
+import { createCV, updateCV, getCV } from "../../../lib/firestoreCVs";
+import EditorSidebar from "../../../components/editor/EditorSidebar";
+import TemplateRenderer from "../../../components/editor/TemplateRenderer";
 
 export default function EditorPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const templateSlug = params.template;
+  const { addToast, ToastContainer } = useToast();
+  const { user } = useAuth();
+  const [saving, setSaving] = useState(false);
 
-  return <EditorPlayground />;
+  const { 
+    cvData, 
+    cvId, 
+    cvName, 
+    setCVName, 
+    updateCvData, 
+    addItem, 
+    removeItem, 
+    reorderItems,
+    addCustomSection,
+    updateCustomSection,
+    removeCustomSection,
+    addCustomSectionItem,
+    updateCustomSectionItem,
+    removeCustomSectionItem,
+    reorderCustomSectionItems,
+    updateDesignSettings,
+    resetDesignSettings,
+    getDesignSettings,
+    loadCV 
+  } = useCVData();
+
+  // Memoize design settings - recalculates when designSettings in cvData changes
+  const designSettings = useMemo(
+    () => getDesignSettings(templateSlug), 
+    [getDesignSettings, templateSlug]
+  );
+
+  // ─────────────────────────────────────────────────────────────
+  // Validation helpers
+  // ─────────────────────────────────────────────────────────────
+
+  const validateUserForSave = useCallback(() => {
+    if (!user) {
+      addToast('Musíte být přihlášeni', 'error');
+      router.push('/login');
+      return false;
+    }
+    if (!user.emailVerified) {
+      addToast(
+        'Pro uložení CV musíte nejprve ověřit svůj email. ' +
+        'Zkontrolujte svou emailovou schránku nebo přejděte do nastavení ' +
+        'pro opětovné odeslání ověřovacího emailu.', 
+        'error'
+      );
+      return false;
+    }
+    return true;
+  }, [user, addToast, router]);
+
+  // ─────────────────────────────────────────────────────────────
+  // Firestore operations
+  // ─────────────────────────────────────────────────────────────
+
+  const loadCVFromFirestore = useCallback(async (id) => {
+    const { cv, error } = await getCV(id);
+    
+    if (error) {
+      addToast('Chyba při načítání CV', 'error');
+      return;
+    }
+    
+    const hasAccess = cv && cv.userId === user?.uid;
+    if (!hasAccess) {
+      addToast('Nemáte oprávnění k tomuto CV', 'error');
+      router.push('/');
+      return;
+    }
+    
+    loadCV(cv.cvData, cv.id, cv.cvName);
+  }, [addToast, loadCV, router, user?.uid]);
+
+  const saveExistingCV = useCallback(async () => {
+    const { error } = await updateCV(cvId, cvData, cvName);
+    if (error) {
+      addToast('Chyba při ukládání', 'error');
+      return null;
+    }
+    return cvId;
+  }, [cvId, cvData, cvName, addToast]);
+
+  const createNewCV = useCallback(async () => {
+    const { id, cvName: generatedName, error } = await createCV(
+      user.uid, 
+      cvData, 
+      templateSlug, 
+      cvName || null
+    );
+    
+    if (error) {
+      addToast('Chyba při vytváření CV', 'error');
+      return null;
+    }
+    
+    loadCV(cvData, id, generatedName);
+    router.replace(`/editor/${templateSlug}?cvId=${id}`);
+    return id;
+  }, [user?.uid, cvData, templateSlug, cvName, addToast, loadCV, router]);
+
+  // ─────────────────────────────────────────────────────────────
+  // Thumbnail generation
+  // ─────────────────────────────────────────────────────────────
+
+  const generateAndSaveThumbnail = useCallback(async (savedCvId) => {
+    const pageElement = document.getElementById('cv-page');
+    if (!pageElement || !savedCvId) return;
+
+    try {
+      const { generateThumbnail } = await import('../../../lib/thumbnailService');
+      const { updateThumbnailUrl } = await import('../../../lib/firestoreCVs');
+      
+      const thumbnailBase64 = await generateThumbnail(pageElement);
+      if (thumbnailBase64) {
+        await updateThumbnailUrl(savedCvId, thumbnailBase64);
+      }
+    } catch (error) {
+      console.error('Error generating thumbnail:', error);
+    }
+  }, []);
+
+  // ─────────────────────────────────────────────────────────────
+  // Main action handlers
+  // ─────────────────────────────────────────────────────────────
+
+  const handleSave = useCallback(async () => {
+    if (!validateUserForSave()) return;
+
+    setSaving(true);
+
+    const savedCvId = cvId 
+      ? await saveExistingCV() 
+      : await createNewCV();
+
+    if (savedCvId) {
+      await generateAndSaveThumbnail(savedCvId);
+      addToast(cvId ? 'CV uloženo' : 'CV vytvořeno', 'success');
+    }
+
+    setSaving(false);
+  }, [validateUserForSave, cvId, saveExistingCV, createNewCV, generateAndSaveThumbnail, addToast]);
+
+  const handleExport = useCallback(async (filename) => {
+    try {
+      const success = await exportToPDF(cvData, templateSlug, filename, designSettings);
+      
+      if (!success) {
+        addToast('Nepodařilo se exportovat CV. Zkuste to prosím znovu.', 'error');
+        return false;
+      }
+
+      addToast('CV bylo úspěšně exportováno do PDF!', 'success');
+      
+      // Update export timestamp if CV is saved
+      if (cvId) {
+        const { updateLastExported } = await import('../../../lib/firestoreCVs');
+        await updateLastExported(cvId);
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Chyba při exportu:', error);
+      addToast('Došlo k chybě při exportu PDF. Zkuste to prosím znovu.', 'error');
+      return false;
+    }
+  }, [cvData, templateSlug, designSettings, cvId, addToast]);
+
+  const handleResetDesign = useCallback(() => {
+    resetDesignSettings(templateSlug);
+    addToast('Design resetován na výchozí nastavení', 'success');
+  }, [resetDesignSettings, templateSlug, addToast]);
+
+  // ─────────────────────────────────────────────────────────────
+  // Effects
+  // ─────────────────────────────────────────────────────────────
+
+  // Load CV from URL parameter on mount (only once)
+  useEffect(() => {
+    const cvIdFromUrl = searchParams.get('cvId');
+    // Only load if URL has cvId, user is logged in, and we haven't already loaded this CV
+    if (cvIdFromUrl && user && cvId !== cvIdFromUrl) {
+      loadCVFromFirestore(cvIdFromUrl);
+    }
+  }, [searchParams, user, cvId, loadCVFromFirestore]);
+
+  // ─────────────────────────────────────────────────────────────
+  // Render
+  // ─────────────────────────────────────────────────────────────
+
+  return (
+    <div className="flex h-screen overflow-hidden">
+      <EditorSidebar
+        cvName={cvName}
+        setCVName={setCVName}
+        cvId={cvId}
+        templateSlug={templateSlug}
+        user={user}
+        saving={saving}
+        onSave={handleSave}
+        onExport={handleExport}
+        onResetDesign={handleResetDesign}
+        cvData={cvData}
+        designSettings={designSettings}
+        updateCvData={updateCvData}
+        addItem={addItem}
+        removeItem={removeItem}
+        reorderItems={reorderItems}
+        addCustomSection={addCustomSection}
+        updateCustomSection={updateCustomSection}
+        removeCustomSection={removeCustomSection}
+        addCustomSectionItem={addCustomSectionItem}
+        updateCustomSectionItem={updateCustomSectionItem}
+        removeCustomSectionItem={removeCustomSectionItem}
+        reorderCustomSectionItems={reorderCustomSectionItems}
+        updateDesignSettings={updateDesignSettings}
+      />
+
+      {/* Preview area */}
+      <div className="w-2/3 overflow-y-auto p-6 bg-gray-100 flex flex-col items-center">
+        <div 
+          id="cv-page"
+          className="w-full max-w-3xl shadow-lg min-h-[500px]"
+          style={{
+            backgroundColor: designSettings.colors.background,
+            width: '794px',
+            minHeight: '1123px',
+            padding: '40px',
+            border: '1px solid #e5e7eb',
+            position: 'relative'
+          }}
+        >
+          <TemplateRenderer
+            templateSlug={templateSlug}
+            data={cvData}
+            designSettings={designSettings}
+          />
+        </div>
+      </div>
+
+      <ToastContainer />
+    </div>
+  );
 }
