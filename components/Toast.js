@@ -16,7 +16,7 @@ export default function Toast({ message, type = 'success', duration = 3000, onCl
   }, [duration, onClose]);
 
   const getToastStyles = () => {
-    const baseStyles = 'fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg transition-all duration-300 transform z-50 flex items-center gap-2';
+    const baseStyles = 'px-6 py-3 rounded-lg shadow-lg transition-all duration-300 transform flex items-center gap-2 cursor-pointer';
     
     if (!isVisible) {
       return `${baseStyles} translate-x-full opacity-0`;
@@ -67,14 +67,19 @@ export default function Toast({ message, type = 'success', duration = 3000, onCl
     }
   };
 
+  const handleDismiss = () => {
+    setIsVisible(false);
+    setTimeout(() => onClose && onClose(), 300);
+  };
+
   return (
-    <div className={getToastStyles()}>
+    <div className={getToastStyles()} onClick={handleDismiss}>
       {getIcon()}
       <span>{message}</span>
       <button
-        onClick={() => {
-          setIsVisible(false);
-          setTimeout(() => onClose && onClose(), 300);
+        onClick={(e) => {
+          e.stopPropagation();
+          handleDismiss();
         }}
         className="ml-2 hover:opacity-75"
       >
@@ -106,7 +111,7 @@ export function useToast() {
   };
 
   const ToastContainer = () => (
-    <>
+    <div className="fixed top-4 right-4 z-50 flex flex-col gap-2">
       {toasts.map(toast => (
         <Toast
           key={toast.id}
@@ -116,7 +121,7 @@ export function useToast() {
           onClose={() => removeToast(toast.id)}
         />
       ))}
-    </>
+    </div>
   );
 
   return {
