@@ -36,7 +36,6 @@ export default function Navbar() {
             setUserName(user.email);
           }
         } catch (error) {
-          console.error('Error loading user name:', error);
           setUserName(user.email);
         }
       }

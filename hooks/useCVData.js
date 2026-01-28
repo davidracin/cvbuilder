@@ -1,12 +1,31 @@
 import { useState, useCallback } from "react";
 import { DEFAULT_CV_DATA, NEW_ITEM_TEMPLATES, TEMPLATE_DESIGN_DEFAULTS } from "../lib/constants";
 
+/**
+ * useCVData Hook
+ * 
+ * Central state management for all CV data. Handles CRUD operations for:
+ * - Personal info (name, email, phone, etc.)
+ * - Array sections (experience, education, skills, languages)
+ * - Custom sections (user-created sections with nested items)
+ * - Design settings (colors, fonts, spacing)
+ * 
+ * All updates use spread syntax (...) to create new objects for React state.
+ */
 export function useCVData() {
-  const [cvData, setCvData] = useState(DEFAULT_CV_DATA);
-  const [cvId, setCVId] = useState(null);
-  const [cvName, setCVName] = useState('');
+  // STATE VARIABLES
+  const [cvData, setCvData] = useState(DEFAULT_CV_DATA);  // All CV content
+  const [cvId, setCVId] = useState(null);                 // Firestore doc ID (null = unsaved)
+  const [cvName, setCVName] = useState('');               // Display name
 
-  // Function to update CV data
+  // GENERIC FIELD UPDATES
+  /**
+   * Update any field in CV data
+   * @param {string} section - Section name ('personal', 'experience', etc.)
+   * @param {string} field - Field to update
+   * @param {any} value - New value
+   * @param {number|null} id - Item ID for array sections, null for others
+   */
   const updateCvData = (section, field, value, id = null) => {
     setCvData((prevData) => {
       if (id !== null && Array.isArray(prevData[section])) {
@@ -36,7 +55,10 @@ export function useCVData() {
     });
   };
 
-  // Function to add new item to array sections
+  // ARRAY SECTION OPERATIONS
+  // For: experience, education, skills, languages
+
+  // Add new item to an array section
   const addItem = (section) => {
     setCvData((prevData) => {
       const newId = Math.max(0, ...prevData[section].map(item => item.id)) + 1;
@@ -52,7 +74,7 @@ export function useCVData() {
     });
   };
 
-  // Function to remove item from array sections
+  // Remove item from array section by ID
   const removeItem = (section, id) => {
     setCvData((prevData) => {
       return {
@@ -62,7 +84,7 @@ export function useCVData() {
     });
   };
 
-  // Function to reorder items in array sections
+  // Reorder items in array section (drag & drop)
   const reorderItems = (section, startIndex, endIndex) => {
     setCvData((prevData) => {
       const items = Array.from(prevData[section]);
@@ -76,7 +98,10 @@ export function useCVData() {
     });
   };
   
-  // Function to add custom section
+  // CUSTOM SECTIONS
+  // User-created sections with nested items array
+
+  // Create a new custom section
   const addCustomSection = (sectionType, title) => {
     setCvData((prevData) => {
       const newId = Math.max(0, ...prevData.customSections.map(s => s.id)) + 1;
@@ -94,7 +119,7 @@ export function useCVData() {
     });
   };
 
-  // Function to update custom section
+  // Update custom section properties (title, type)
   const updateCustomSection = (sectionId, field, value) => {
     setCvData((prevData) => ({
       ...prevData,
@@ -104,7 +129,7 @@ export function useCVData() {
     }));
   };
 
-  // Function to remove custom section
+  // Delete an entire custom section
   const removeCustomSection = (sectionId) => {
     setCvData((prevData) => ({
       ...prevData,
@@ -112,7 +137,7 @@ export function useCVData() {
     }));
   };
 
-  // Function to add item to custom section
+  // Add item inside a custom section
   const addCustomSectionItem = (sectionId) => {
     setCvData((prevData) => ({
       ...prevData,
@@ -133,7 +158,7 @@ export function useCVData() {
     }));
   };
 
-  // Function to update custom section item
+  // Update field on item inside custom section
   const updateCustomSectionItem = (sectionId, itemId, field, value) => {
     setCvData((prevData) => ({
       ...prevData,
@@ -151,7 +176,7 @@ export function useCVData() {
     }));
   };
 
-  // Function to remove custom section item
+  // Remove item from inside a custom section
   const removeCustomSectionItem = (sectionId, itemId) => {
     setCvData((prevData) => ({
       ...prevData,
@@ -167,7 +192,7 @@ export function useCVData() {
     }));
   };
 
-  // Function to reorder custom section items
+  // Reorder items within a custom section (drag & drop)
   const reorderCustomSectionItems = (sectionId, startIndex, endIndex) => {
     setCvData((prevData) => ({
       ...prevData,
@@ -183,7 +208,10 @@ export function useCVData() {
     }));
   };
 
-  // Function to update design settings
+  // DESIGN SETTINGS
+  // Colors, fonts, spacing customization
+
+  // Update a single design setting
   const updateDesignSettings = (category, field, value) => {
     setCvData((prevData) => ({
       ...prevData,
@@ -197,7 +225,7 @@ export function useCVData() {
     }));
   };
 
-  // Function to reset design settings to template defaults
+  // Reset all design settings to template defaults
   const resetDesignSettings = (templateName) => {
     const defaults = TEMPLATE_DESIGN_DEFAULTS[templateName];
     if (defaults) {
@@ -208,7 +236,7 @@ export function useCVData() {
     }
   };
 
-  // Function to get merged design settings (user overrides + template defaults)
+  // Get merged design settings (user overrides + template defaults)
   const getDesignSettings = useCallback((templateName) => {
     const defaults = TEMPLATE_DESIGN_DEFAULTS[templateName] || TEMPLATE_DESIGN_DEFAULTS.moderni;
     if (!cvData.designSettings) {
@@ -223,7 +251,8 @@ export function useCVData() {
     };
   }, [cvData.designSettings]);
 
-  // Function to load a complete CV from database
+  // PERSISTENCE
+  // Load complete CV from database
   const loadCV = useCallback((newCvData, id, name) => {
     // Ensure designSettings exists (for backwards compatibility with older CVs)
     const dataWithDesignSettings = {
@@ -235,6 +264,7 @@ export function useCVData() {
     setCVName(name);
   }, []);
 
+  // RETURN HOOK
   return {
     cvData,
     cvId,

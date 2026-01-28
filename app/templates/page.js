@@ -26,9 +26,8 @@ export default function TemplatesPage() {
       setLoading(true);
       const { cvs: userCvs, error } = await getUserCVs(user.uid);
       if (error) {
-        console.error('Error loading CVs:', error);
+        // Error loading CVs - show empty state
       } else {
-        console.log('Loaded CVs:', userCvs);
         setCvs(userCvs);
       }
       setLoading(false);

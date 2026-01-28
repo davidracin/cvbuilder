@@ -23,7 +23,7 @@ export function useAuth() {
             body: JSON.stringify({ token }),
           });
         } catch (error) {
-          console.error('Error setting auth cookie:', error);
+          // Error setting cookie
         }
       } else {
         try {
@@ -31,7 +31,7 @@ export function useAuth() {
             method: 'DELETE',
           });
         } catch (error) {
-          console.error('Error removing auth cookie:', error);
+          // Error removing cookie
         }
       }
     });

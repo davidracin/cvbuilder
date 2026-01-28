@@ -46,10 +46,7 @@ export default function EditorPage() {
     [getDesignSettings, templateSlug]
   );
 
-  // ─────────────────────────────────────────────────────────────
   // Validation helpers
-  // ─────────────────────────────────────────────────────────────
-
   const validateUserForSave = useCallback(() => {
     if (!user) {
       addToast('Musíte být přihlášeni', 'error');
@@ -68,10 +65,7 @@ export default function EditorPage() {
     return true;
   }, [user, addToast, router]);
 
-  // ─────────────────────────────────────────────────────────────
   // Firestore operations
-  // ─────────────────────────────────────────────────────────────
-
   const loadCVFromFirestore = useCallback(async (id) => {
     const { cv, error } = await getCV(id);
     
@@ -117,10 +111,7 @@ export default function EditorPage() {
     return id;
   }, [user?.uid, cvData, templateSlug, cvName, addToast, loadCV, router]);
 
-  // ─────────────────────────────────────────────────────────────
   // Thumbnail generation
-  // ─────────────────────────────────────────────────────────────
-
   const generateAndSaveThumbnail = useCallback(async (savedCvId) => {
     const pageElement = document.getElementById('cv-page');
     if (!pageElement || !savedCvId) return;
@@ -134,14 +125,11 @@ export default function EditorPage() {
         await updateThumbnailUrl(savedCvId, thumbnailBase64);
       }
     } catch (error) {
-      console.error('Error generating thumbnail:', error);
+      // Thumbnail failed implemetation
     }
   }, []);
 
-  // ─────────────────────────────────────────────────────────────
   // Main action handlers
-  // ─────────────────────────────────────────────────────────────
-
   const handleSave = useCallback(async () => {
     if (!validateUserForSave()) return;
 
@@ -178,7 +166,6 @@ export default function EditorPage() {
       
       return true;
     } catch (error) {
-      console.error('Chyba při exportu:', error);
       addToast('Došlo k chybě při exportu PDF. Zkuste to prosím znovu.', 'error');
       return false;
     }
@@ -189,10 +176,7 @@ export default function EditorPage() {
     addToast('Design resetován na výchozí nastavení', 'success');
   }, [resetDesignSettings, templateSlug, addToast]);
 
-  // ─────────────────────────────────────────────────────────────
   // Effects
-  // ─────────────────────────────────────────────────────────────
-
   // Load CV from URL parameter on mount (only once)
   useEffect(() => {
     const cvIdFromUrl = searchParams.get('cvId');
@@ -202,10 +186,7 @@ export default function EditorPage() {
     }
   }, [searchParams, user, cvId, loadCVFromFirestore]);
 
-  // ─────────────────────────────────────────────────────────────
   // Render
-  // ─────────────────────────────────────────────────────────────
-
   return (
     <div className="flex h-screen overflow-hidden">
       <EditorSidebar

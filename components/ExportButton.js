@@ -1,8 +1,6 @@
 import React from 'react';
 
-/**
- * Export Button Component with loading state and better UX
- */
+// Export Button Component with loading state.
 export default function ExportButton({ 
   onExport, 
   disabled = false, 
@@ -18,7 +16,7 @@ export default function ExportButton({
     try {
       await onExport(filename);
     } catch (error) {
-      console.error('Export failed:', error);
+      // Error handling delegated to parent component
     } finally {
       setIsExporting(false);
     }

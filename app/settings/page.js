@@ -61,7 +61,7 @@ export default function SettingsPage() {
             setLastName(userData.lastName || '');
           }
         } catch (error) {
-          console.error('Error loading user profile:', error);
+          // Failed to load profile
         }
       }
     };
@@ -106,7 +106,6 @@ export default function SettingsPage() {
       setProfileSuccess('Profil byl úspěšně aktualizován!');
       setProfileLoading(false);
     } catch (error) {
-      console.error('Profile update error:', error);
       setProfileError('Nepodařilo se aktualizovat profil.');
       setProfileLoading(false);
     }
@@ -148,8 +147,6 @@ export default function SettingsPage() {
       setNewEmail('');
       setEmailPassword('');
     } catch (error) {
-      console.error('Email change error:', error);
-      
       // Handle specific error codes
       if (error.code === 'auth/wrong-password') {
         setEmailError('Nesprávné heslo.');
@@ -202,7 +199,6 @@ export default function SettingsPage() {
         return;
       }
     } catch (validationError) {
-      console.error('Password validation error:', validationError);
       setPasswordError('Chyba při validaci hesla.');
       return;
     }
@@ -223,8 +219,6 @@ export default function SettingsPage() {
       setNewPassword('');
       setConfirmPassword('');
     } catch (error) {
-      console.error('Password change error:', error);
-      
       // Handle specific error codes
       if (error.code === 'auth/wrong-password') {
         setPasswordError('Nesprávné aktuální heslo.');

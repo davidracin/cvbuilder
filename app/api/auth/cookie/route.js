@@ -22,7 +22,6 @@ export async function POST(request) {
 
     return response;
   } catch (error) {
-    console.error('Error setting auth cookie:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -37,7 +36,6 @@ export async function DELETE() {
 
     return response;
   } catch (error) {
-    console.error('Error removing auth cookie:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

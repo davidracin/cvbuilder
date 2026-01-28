@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -63,12 +64,13 @@ export function SignupForm({
         return;
       }
     } catch (validationError) {
-      console.error('Password validation error:', validationError);
+      // Fallback to generic error if validation fails
+      setError('Chyba při potvrzení hesla.');
     }
 
     setLoading(true);
 
-    const { user, error: signUpError } = await signUp(email, password, firstName, lastName);
+    const { error: signUpError } = await signUp(email, password, firstName, lastName);
 
     if (signUpError) {
       setError(signUpError);
@@ -164,7 +166,7 @@ export function SignupForm({
                 </Button>
               </Field>
               <FieldDescription className="text-center">
-                Již máte účet? <a href="/login">Přihlásit se</a>
+                Již máte účet? <Link href="/login"> Přihlásit se</Link>
               </FieldDescription>
             </FieldGroup>
           </form>

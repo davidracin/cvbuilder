@@ -7,13 +7,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/dropdown-menu";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { FONT_OPTIONS } from "@/lib/constants";
