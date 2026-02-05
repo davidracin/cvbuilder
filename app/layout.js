@@ -56,6 +56,12 @@ const robotoMono = Roboto_Mono({
   display: "swap",
 });
 
+export const metadata = {
+  title: "cvbuilder",
+  description:
+    "cvbuilder je online nástroj pro jednoduchou a intuitivní tvorbu životopisů. Vyberte si z různých šablon a přizpůsobte svůj životopis během několika minut.",
+};
+
 export default function RootLayout({ children }) {
     return (
     <html lang="cs">

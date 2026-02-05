@@ -1,5 +1,9 @@
 import { ForgotPasswordForm } from "@/components/forgot-password-form"
 
+export const metadata = {
+  title: "Zapomenuté heslo",
+};
+
 export default function ForgotPasswordPage() {
   return (
     <div

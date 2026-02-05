@@ -9,6 +9,10 @@ import { createCV, updateCV, getCV } from "../../../lib/firestoreCVs";
 import EditorSidebar from "../../../components/editor/EditorSidebar";
 import TemplateRenderer from "../../../components/editor/TemplateRenderer";
 
+export const metadata = {
+  title: "Editor CV",
+};
+
 export default function EditorPage() {
   const params = useParams();
   const searchParams = useSearchParams();
