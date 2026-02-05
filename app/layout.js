@@ -1,5 +1,3 @@
-'use client';
-
 import { Inter, Roboto, Open_Sans, Lato, Montserrat, Merriweather, Playfair_Display, Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
@@ -57,7 +55,10 @@ const robotoMono = Roboto_Mono({
 });
 
 export const metadata = {
-  title: "cvbuilder",
+  title: {
+    default: "cvbuilder",
+    template: "%s - cvbuilder",
+  },
   description:
     "cvbuilder je online nástroj pro jednoduchou a intuitivní tvorbu životopisů. Vyberte si z různých šablon a přizpůsobte svůj životopis během několika minut.",
 };

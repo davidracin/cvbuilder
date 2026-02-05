@@ -13,9 +13,6 @@ const TEMPLATE_NAMES = {
   kreativni: 'Kreativní',
   profesionalni: 'Profesionální'
 };
-export const metadata = {
-  title: "Moje šablony",
-};
 
 export default function TemplatesPage() {
   const router = useRouter();

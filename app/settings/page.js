@@ -18,10 +18,6 @@ import { resendVerificationEmail } from "@/lib/firebaseAuth";
 import { validatePassword, verifyBeforeUpdateEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth";
 import { getUserProfile, updateUserProfile } from "@/lib/firestoreUsers";
 
-export const metadata = {
-  title: "Nastavení účtu",
-};
-
 export default function SettingsPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
