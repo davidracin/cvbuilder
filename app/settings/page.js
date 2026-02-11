@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -16,10 +16,10 @@ import { Separator } from "@/components/ui/separator";
 import { auth } from "@/lib/firebaseAuth";
 import { resendVerificationEmail } from "@/lib/firebaseAuth";
 import { validatePassword, verifyBeforeUpdateEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth";
-import { getUserProfile, updateUserProfile } from "@/lib/firestoreUsers";
+import { updateUserProfile } from "@/lib/firestoreUsers";
 
 export default function SettingsPage() {
-  const { user, loading } = useAuth();
+  const { user, profile, loading, refreshUser } = useAuth();
   const router = useRouter();
 
   // Profile state
@@ -49,25 +49,24 @@ export default function SettingsPage() {
   const [verificationSuccess, setVerificationSuccess] = useState('');
   const [verificationError, setVerificationError] = useState('');
 
-  // Load user profile data from Firestore
+  // Sync form fields when profile data changes (real-time from Firestore)
   useEffect(() => {
-    const loadUserProfile = async () => {
-      if (user?.uid) {
-        try {
-          const userData = await getUserProfile(user.uid);
-          
-          if (userData) {
-            setFirstName(userData.firstName || '');
-            setLastName(userData.lastName || '');
-          }
-        } catch (error) {
-          // Failed to load profile
-        }
-      }
-    };
+    if (profile) {
+      setFirstName(profile.firstName || '');
+      setLastName(profile.lastName || '');
+    }
+  }, [profile]);
 
-    loadUserProfile();
-  }, [user]);
+  // Poll for email verification status while user is unverified on this page
+  useEffect(() => {
+    if (!user || user.emailVerified) return;
+
+    const interval = setInterval(async () => {
+      await refreshUser();
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [user, user?.emailVerified, refreshUser]);
 
   // Redirect if not logged in
   useEffect(() => {

@@ -1,12 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { logOut } from '@/lib/firebaseAuth';
-import { getUserProfile } from '@/lib/firestoreUsers';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, User, Menu, X } from 'lucide-react';
 import {
@@ -19,30 +18,13 @@ import {
 
 export default function Navbar() {
   const router = useRouter();
-  const { user, loading } = useAuth();
-  const [userName, setUserName] = useState('');
+  const { user, profile, loading } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  useEffect(() => {
-    const loadUserName = async () => {
-      if (user?.uid) {
-        try {
-          const userData = await getUserProfile(user.uid);
-          if (userData && userData.firstName && userData.lastName) {
-            setUserName(`${userData.firstName} ${userData.lastName}`);
-          } else if (user.displayName) {
-            setUserName(user.displayName);
-          } else {
-            setUserName(user.email);
-          }
-        } catch (error) {
-          setUserName(user.email);
-        }
-      }
-    };
-
-    loadUserName();
-  }, [user]);
+  // Build display name from shared profile context (real-time from Firestore)
+  const userName = profile?.firstName && profile?.lastName
+    ? `${profile.firstName} ${profile.lastName}`
+    : user?.displayName || user?.email || '';
 
   const handleLogout = async () => {
     await logOut();

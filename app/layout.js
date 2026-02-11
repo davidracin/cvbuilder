@@ -1,6 +1,7 @@
 import { Inter, Roboto, Open_Sans, Lato, Montserrat, Merriweather, Playfair_Display, Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import { AuthProvider } from "@/components/AuthProvider";
 
 // Load all fonts used in CV templates with Czech character support
 const inter = Inter({
@@ -79,8 +80,10 @@ export default function RootLayout({ children }) {
           antialiased
         `}
       >
-        {<Navbar />}
-        {children}
+        <AuthProvider>
+          <Navbar />
+            {children}
+        </AuthProvider>
       </body>
     </html>
   );
