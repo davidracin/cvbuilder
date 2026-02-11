@@ -1,6 +1,7 @@
 import { Inter, Roboto, Open_Sans, Lato, Montserrat, Merriweather, Playfair_Display, Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import LayoutShell from "@/components/LayoutShell";
 import { AuthProvider } from "@/components/AuthProvider";
 
 // Load all fonts used in CV templates with Czech character support
@@ -82,7 +83,9 @@ export default function RootLayout({ children }) {
       >
         <AuthProvider>
           <Navbar />
+          <LayoutShell>
             {children}
+          </LayoutShell>
         </AuthProvider>
       </body>
     </html>
