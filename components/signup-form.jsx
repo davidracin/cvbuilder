@@ -27,6 +27,7 @@ export function SignupForm({
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [consentAccepted, setConsentAccepted] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -66,6 +67,11 @@ export function SignupForm({
     } catch (validationError) {
       // Fallback to generic error if validation fails
       setError('Chyba při potvrzení hesla.');
+    }
+
+    if (!consentAccepted) {
+      setError('Musíte souhlasit s podmínkami použití a zásadami ochrany osobních údajů.');
+      return;
     }
 
     setLoading(true);
@@ -161,7 +167,26 @@ export function SignupForm({
                 </FieldDescription>
               </Field>
               <Field>
-                <Button type="submit" disabled={loading}>
+                <div className="flex items-start gap-3">
+                  <input
+                    id="gdpr-consent"
+                    type="checkbox"
+                    checked={consentAccepted}
+                    onChange={(e) => setConsentAccepted(e.target.checked)}
+                    className="mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 accent-primary cursor-pointer"
+                    required
+                  />
+                  <label htmlFor="gdpr-consent" className="text-sm text-muted-foreground cursor-pointer leading-snug">
+                    Souhlasím s{' '}
+                    <Link href="/legal/terms" className="underline hover:text-foreground" target="_blank">Podmínkami použití</Link>
+                    {' '}a{' '}
+                    <Link href="/legal/privacy" className="underline hover:text-foreground" target="_blank">Zásadami ochrany osobních údajů (GDPR)</Link>.
+                    Tento souhlas je nutný pro vytvoření účtu a ukládání CV.
+                  </label>
+                </div>
+              </Field>
+              <Field>
+                <Button type="submit" disabled={loading || !consentAccepted}>
                   {loading ? 'Vytváření účtu...' : 'Vytvořit účet'}
                 </Button>
               </Field>

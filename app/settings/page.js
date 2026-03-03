@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { auth } from "@/lib/firebaseAuth";
-import { resendVerificationEmail } from "@/lib/firebaseAuth";
+import { resendVerificationEmail, deleteAccount } from "@/lib/firebaseAuth";
 import { validatePassword, verifyBeforeUpdateEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth";
 import { updateUserProfile } from "@/lib/firestoreUsers";
 
@@ -48,6 +48,17 @@ export default function SettingsPage() {
   const [verificationLoading, setVerificationLoading] = useState(false);
   const [verificationSuccess, setVerificationSuccess] = useState('');
   const [verificationError, setVerificationError] = useState('');
+
+  // GDPR consent withdrawal state
+  const [gdprConfirmVisible, setGdprConfirmVisible] = useState(false);
+  const [gdprLoading, setGdprLoading] = useState(false);
+  const [gdprSuccess, setGdprSuccess] = useState('');
+  const [gdprError, setGdprError] = useState('');
+
+  // Account deletion state
+  const [deletePassword, setDeletePassword] = useState('');
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteError, setDeleteError] = useState('');
 
   // Sync form fields when profile data changes (real-time from Firestore)
   useEffect(() => {
@@ -233,6 +244,58 @@ export default function SettingsPage() {
     }
   };
 
+  const handleGdprWithdrawRequest = () => {
+    setGdprError('');
+    setGdprSuccess('');
+    setGdprConfirmVisible(true);
+  };
+
+  const handleGdprWithdrawConfirm = async () => {
+    setGdprError('');
+    setGdprLoading(true);
+    try {
+      await updateUserProfile(user.uid, {
+        gdprConsent: false,
+        gdprConsentWithdrawnAt: new Date().toISOString()
+      });
+      setGdprConfirmVisible(false);
+      setGdprSuccess('Souhlas byl úspěšně odvolán. Nová CV nelze ukládat.');
+    } catch (err) {
+      setGdprError('Nepodařilo se odvolat souhlas. Zkuste to prosím znovu.');
+    }
+    setGdprLoading(false);
+  };
+
+  const handleGdprRestore = async () => {
+    setGdprError('');
+    setGdprSuccess('');
+    setGdprLoading(true);
+    try {
+      await updateUserProfile(user.uid, {
+        gdprConsent: true,
+        gdprConsentAt: new Date().toISOString(),
+        gdprConsentWithdrawnAt: null
+      });
+      setGdprSuccess('Souhlas byl úspěšně obnoven. Můžete opět ukládat CV.');
+    } catch (err) {
+      setGdprError('Nepodařilo se obnovit souhlas. Zkuste to prosím znovu.');
+    }
+    setGdprLoading(false);
+  };
+
+  const handleDeleteAccount = async (e) => {
+    e.preventDefault();
+    setDeleteError('');
+    setDeleteLoading(true);
+    const { error } = await deleteAccount(deletePassword);
+    if (error) {
+      setDeleteError(error);
+      setDeleteLoading(false);
+    } else {
+      router.push('/');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -251,7 +314,7 @@ export default function SettingsPage() {
             <Card className="border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20">
               <CardHeader>
                 <CardTitle className="text-amber-800 dark:text-amber-200 flex items-center gap-2">
-                  ⚠️ Email není ověřen
+                  Email není ověřen
                 </CardTitle>
                 <CardDescription className="text-amber-700 dark:text-amber-300">
                   Pro plné využití aplikace (ukládání CV) ověřte svůj email.
@@ -465,6 +528,135 @@ export default function SettingsPage() {
               </form>
             </CardContent>
           </Card>
+
+          {/* GDPR Consent Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Souhlas se zpracováním osobních údajů</CardTitle>
+              <CardDescription>
+                {profile?.gdprConsent !== false
+                  ? 'Váš souhlas je aktivní. Můžete ukládat a spravovat CV.'
+                  : 'Souhlas byl odvolán. Ukládání nových CV je zablokováno.'}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {gdprSuccess && (
+                <div className="bg-green-50 text-green-600 p-3 rounded-md text-sm mb-3">
+                  {gdprSuccess}
+                </div>
+              )}
+              {gdprError && (
+                <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm mb-3">
+                  {gdprError}
+                </div>
+              )}
+
+              {profile?.gdprConsent !== false ? (
+                <div className="space-y-3">
+                  {gdprConfirmVisible ? (
+                    <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 p-4 rounded-md text-sm text-amber-800 dark:text-amber-200">
+                      <p className="font-medium mb-1">Opravdu chcete odvolat souhlas?</p>
+                      {(profile?.cvCount ?? 0) > 0 ? (
+                        <p>
+                          Máte {profile.cvCount} uložených CV. Zůstanou uložena a zobrazíte je
+                          v sekci{' '}
+                          <a href="/templates" className="underline font-medium">Šablony</a>,
+                          ale nebudete moci ukládat nová ani aktualizovat stávající, dokud souhlas neobnovíte.
+                        </p>
+                      ) : (
+                        <p>
+                          Po odvolání souhlasu nebudete moci ukládat CV, dokud souhlas neobnovíte.
+                        </p>
+                      )}
+                      <div className="flex gap-2 mt-3">
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={handleGdprWithdrawConfirm}
+                          disabled={gdprLoading}
+                        >
+                          {gdprLoading ? 'Odvolávám...' : 'Potvrdit odvolání'}
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setGdprConfirmVisible(false)}
+                          disabled={gdprLoading}
+                        >
+                          Zrušit
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <Button
+                      variant="outline"
+                      onClick={handleGdprWithdrawRequest}
+                    >
+                      Odvolat souhlas
+                    </Button>
+                  )}
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 p-3 rounded-md text-sm text-amber-800 dark:text-amber-200">
+                    Ukládání CV je zablokováno. Obnovte souhlas pro plné využití aplikace.
+                  </div>
+                  <Button onClick={handleGdprRestore} disabled={gdprLoading}>
+                    {gdprLoading ? 'Obnovuji...' : 'Obnovit souhlas'}
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Danger Zone Card */}
+          <Card className="border-red-200 dark:border-red-900">
+            <CardHeader>
+              <CardTitle className="text-red-700 dark:text-red-400 flex items-center gap-2">
+                Nebezpečná zóna
+              </CardTitle>
+              <CardDescription>
+                Trvale smazat účet a všechna data včetně uložených CV. Tato akce je nevratná.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleDeleteAccount}>
+                <FieldGroup>
+                  {deleteError && (
+                    <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm">
+                      {deleteError}
+                    </div>
+                  )}
+                  <Field>
+                    <FieldLabel htmlFor="deletePassword">
+                      Pro potvrzení zadejte své heslo
+                    </FieldLabel>
+                    <Input
+                      id="deletePassword"
+                      type="password"
+                      placeholder="Vaše aktuální heslo"
+                      value={deletePassword}
+                      onChange={(e) => setDeletePassword(e.target.value)}
+                      required
+                    />
+                    <FieldDescription>
+                      Smažou se veškerá vaše data: profil, všechna uložená CV a účet.
+                    </FieldDescription>
+                  </Field>
+                  <Field>
+                    <Button
+                      type="submit"
+                      variant="destructive"
+                      disabled={deleteLoading || !deletePassword}
+                    >
+                      {deleteLoading ? 'Mazání účtu...' : 'Smazat účet a všechna data'}
+                    </Button>
+                  </Field>
+                </FieldGroup>
+              </form>
+            </CardContent>
+          </Card>
+
         </div>
       </div>
     </div>

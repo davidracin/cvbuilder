@@ -15,7 +15,7 @@ export default function EditorPage() {
   const router = useRouter();
   const templateSlug = params.template;
   const { addToast, ToastContainer } = useToast();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const [saving, setSaving] = useState(false);
 
   const { 
@@ -62,8 +62,16 @@ export default function EditorPage() {
       );
       return false;
     }
+    if (profile && profile.gdprConsent === false) {
+      addToast(
+        'Odvolali jste souhlas se zpracováním osobních údajů. ' +
+        'Ukládání CV je zablokované. Obnovřte souhlas v Nastavení.',
+        'error'
+      );
+      return false;
+    }
     return true;
-  }, [user, addToast, router]);
+  }, [user, profile, addToast, router]);
 
   // Firestore operations
   const loadCVFromFirestore = useCallback(async (id) => {

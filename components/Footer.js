@@ -6,7 +6,7 @@ export default function Footer() {
     return (
         <footer className="w-full border-t bg-background py-6 mt-auto">
             <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-                <p>&copy; {currentYear} cvbuilder. Studentský projekt (Maturitní práce).</p>
+                <p>Studentský projekt (Maturitní práce) {currentYear}.</p>
                 <div className="mt-2 space-x-4">
                     <Link href="/legal/terms" className="text-blue-600 hover:underline">
                         Obchodní podmínky
