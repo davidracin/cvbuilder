@@ -203,6 +203,7 @@ export default function EditorPage() {
         cvId={cvId}
         templateSlug={templateSlug}
         user={user}
+        profile={profile}
         saving={saving}
         onSave={handleSave}
         onExport={handleExport}

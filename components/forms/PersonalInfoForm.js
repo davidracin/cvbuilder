@@ -2,11 +2,48 @@
 
 import { DatePicker } from "@/components/ui/date-picker"
 import { isoToDate, dateToISO } from "@/lib/utils"
+import dialCodes from "@/lib/dialCodes"
+
+function parsePhone(phone) {
+  if (!phone) return { prefix: "", localNumber: "" };
+  if (phone.startsWith("+")) {
+    const spaceIdx = phone.indexOf(" ");
+    if (spaceIdx !== -1) {
+      return { prefix: phone.slice(0, spaceIdx), localNumber: phone.slice(spaceIdx + 1) };
+    }
+    return { prefix: phone, localNumber: "" };
+  }
+  return { prefix: "+420", localNumber: phone };
+}
 
 export default function PersonalInfoForm({ data, onUpdate }) {
   const handleDateChange = (date) => {
     const isoDate = date ? dateToISO(date) : "";
     onUpdate("personal", "dateOfBirth", isoDate);
+  };
+
+  const { prefix, localNumber } = parsePhone(data.phone);
+  const isCustomPrefix = prefix !== "" && !dialCodes.some(d => d.code === prefix);
+  const selectValue = prefix === "" ? "none" : isCustomPrefix ? "custom" : prefix;
+
+  const handlePrefixSelect = (e) => {
+    const val = e.target.value;
+    if (val === "custom") {
+      onUpdate("personal", "phone", "+ " + localNumber);
+    } else {
+      onUpdate("personal", "phone", val + " " + localNumber);
+    }
+  };
+
+  const handleCustomPrefix = (e) => {
+    let val = e.target.value.replace(/[^\d+]/g, "");
+    if (val && !val.startsWith("+")) val = "+" + val;
+    onUpdate("personal", "phone", val + " " + localNumber);
+  };
+
+  const handleLocalNumber = (e) => {
+    const digits = e.target.value.replace(/[^\d ]/g, "");
+    onUpdate("personal", "phone", prefix + " " + digits);
   };
 
   return (
@@ -43,12 +80,38 @@ export default function PersonalInfoForm({ data, onUpdate }) {
       
       <div>
         <label className="block text-sm font-medium mb-1.5">Telefon</label>
-        <input 
-          type="text" 
-          className="w-full p-2 border-2 rounded bg-sidebar-accent text-sidebar-accent-foreground focus:border-sidebar-ring focus:outline-none transition-all"
-          value={data.phone}
-          onChange={(e) => onUpdate("personal", "phone", e.target.value)}
-        />
+        <div className="flex gap-2">
+          <select
+            value={selectValue}
+            onChange={handlePrefixSelect}
+            className="p-2 border-2 rounded bg-sidebar-accent text-sidebar-accent-foreground focus:border-sidebar-ring focus:outline-none transition-all text-sm"
+          >
+            {dialCodes.map((d) => (
+              <option key={d.label} value={d.code}>{d.label}</option>
+            ))}
+            <option value="custom">Vlastní (+???)</option>
+          </select>
+          {isCustomPrefix && (
+            <input
+              type="text"
+              value={prefix}
+              onChange={handleCustomPrefix}
+              placeholder="+000"
+              maxLength={6}
+              className="w-20 p-2 border-2 rounded bg-sidebar-accent text-sidebar-accent-foreground focus:border-sidebar-ring focus:outline-none transition-all text-sm"
+            />
+          )}
+          {prefix !== "" && (
+            <input
+              type="tel"
+              value={localNumber}
+              onChange={handleLocalNumber}
+              placeholder="123 456 789"
+              className="flex-1 p-2 border-2 rounded bg-sidebar-accent text-sidebar-accent-foreground focus:border-sidebar-ring focus:outline-none transition-all"
+            />
+          )}
+        </div>
+        <p className="text-xs text-muted-foreground mt-1">Formát: +420 123 456 789</p>
       </div>
       
       <div>

@@ -24,6 +24,7 @@ function EditorSidebar({
   templateSlug,
   // Auth & state
   user,
+  profile,
   saving,
   // Actions
   onSave,
@@ -65,7 +66,7 @@ function EditorSidebar({
 
         {/* Action Buttons */}
         <div className="flex gap-2 mb-4">
-          {user ? (
+          {user && profile?.gdprConsent !== false ? (
             <button
               onClick={onSave}
               disabled={saving}
@@ -75,7 +76,7 @@ function EditorSidebar({
             </button>
           ) : (
             <div className="flex-1 px-4 py-2 bg-gray-300 text-gray-500 rounded-md text-sm font-medium text-center cursor-not-allowed">
-              Přihlaste se pro uložení
+              {user ? 'Souhlas GDPR odvolán' : 'Přihlaste se pro uložení'}
             </div>
           )}
           
