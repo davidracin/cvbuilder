@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { exportToPDF } from "../../../lib/pdfExportNew";
 import { useToast } from "../../../components/Toast";
@@ -185,6 +185,17 @@ export default function EditorPage() {
   }, [resetDesignSettings, templateSlug, addToast]);
 
   // Effects
+  const hasInitializedUserData = useRef(false);
+
+  // Auto-fill name & email from user profile for new CVs (no cvId in URL)
+  useEffect(() => {
+    if (searchParams.get('cvId') || !profile || hasInitializedUserData.current) return;
+    hasInitializedUserData.current = true;
+    const fullName = [profile.firstName, profile.lastName].filter(Boolean).join(' ');
+    if (fullName) updateCvData('personal', 'name', fullName);
+    if (user?.email) updateCvData('personal', 'email', user.email);
+  }, [profile, searchParams, updateCvData, user]);
+
   // Load CV from URL parameter on mount (only once)
   useEffect(() => {
     const cvIdFromUrl = searchParams.get('cvId');

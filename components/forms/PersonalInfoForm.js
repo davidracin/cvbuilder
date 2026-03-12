@@ -3,6 +3,7 @@
 import { DatePicker } from "@/components/ui/date-picker"
 import { isoToDate, dateToISO } from "@/lib/utils"
 import dialCodes from "@/lib/dialCodes"
+import { DEFAULT_CV_DATA } from "@/lib/constants"
 
 function parsePhone(phone) {
   if (!phone) return { prefix: "", localNumber: "" };
@@ -55,6 +56,7 @@ export default function PersonalInfoForm({ data, onUpdate }) {
           className="w-full p-2 border-2 rounded bg-sidebar-accent text-sidebar-accent-foreground focus:border-sidebar-ring focus:outline-none transition-all"
           value={data.name}
           onChange={(e) => onUpdate("personal", "name", e.target.value)}
+          placeholder={DEFAULT_CV_DATA.personal.name}
         />
       </div>
       
@@ -65,6 +67,7 @@ export default function PersonalInfoForm({ data, onUpdate }) {
           className="w-full p-2 border-2 rounded bg-sidebar-accent text-sidebar-accent-foreground focus:border-sidebar-ring focus:outline-none transition-all"
           value={data.title}
           onChange={(e) => onUpdate("personal", "title", e.target.value)}
+          placeholder={DEFAULT_CV_DATA.personal.title}
         />
       </div>
       
@@ -75,6 +78,7 @@ export default function PersonalInfoForm({ data, onUpdate }) {
           className="w-full p-2 border-2 rounded bg-sidebar-accent text-sidebar-accent-foreground focus:border-sidebar-ring focus:outline-none transition-all"
           value={data.email}
           onChange={(e) => onUpdate("personal", "email", e.target.value)}
+          placeholder={DEFAULT_CV_DATA.personal.email}
         />
       </div>
       
@@ -121,6 +125,7 @@ export default function PersonalInfoForm({ data, onUpdate }) {
           className="w-full p-2 border-2 rounded bg-sidebar-accent text-sidebar-accent-foreground focus:border-sidebar-ring focus:outline-none transition-all"
           value={data.address}
           onChange={(e) => onUpdate("personal", "address", e.target.value)}
+          placeholder={DEFAULT_CV_DATA.personal.address}
         />
       </div>
       
