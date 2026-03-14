@@ -48,7 +48,7 @@ function EditorSidebar({
   updateDesignSettings,
 }) {
   return (
-    <div className="w-1/3 bg-sidebar text-sidebar-foreground overflow-y-auto p-4 border-r border-sidebar-border">
+    <div className="h-full bg-sidebar text-sidebar-foreground overflow-y-auto p-4 border-r border-sidebar-border">
       <div className="mb-4">
         <h1 className="text-xl font-bold mb-3">Editor CV</h1>
         

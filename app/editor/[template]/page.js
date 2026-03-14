@@ -8,6 +8,7 @@ import { useAuth } from "../../../hooks/useAuth";
 import { createCV, updateCV, getCV } from "../../../lib/firestoreCVs";
 import EditorSidebar from "../../../components/editor/EditorSidebar";
 import TemplateRenderer from "../../../components/editor/TemplateRenderer";
+import { PenLine, Eye } from "lucide-react";
 
 export default function EditorPage() {
   const params = useParams();
@@ -205,55 +206,132 @@ export default function EditorPage() {
     }
   }, [searchParams, user, cvId, loadCVFromFirestore]);
 
+  // Mobile view toggle
+  const [mobileView, setMobileView] = useState('edit');
+
+  // Preview scaling for mobile
+  const previewContainerRef = useRef(null);
+  const [previewScale, setPreviewScale] = useState(1);
+
+  useEffect(() => {
+    const container = previewContainerRef.current;
+    if (!container) return;
+
+    const updateScale = () => {
+      const containerWidth = container.clientWidth;
+      const padding = 32; // 16px each side
+      const availableWidth = containerWidth - padding;
+      const scale = Math.min(1, availableWidth / 794);
+      setPreviewScale(scale);
+    };
+
+    updateScale();
+    const observer = new ResizeObserver(updateScale);
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, [mobileView]);
+
   // Render
   return (
-    <div className="flex h-screen overflow-hidden">
-      <EditorSidebar
-        cvName={cvName}
-        setCVName={setCVName}
-        cvId={cvId}
-        templateSlug={templateSlug}
-        user={user}
-        profile={profile}
-        saving={saving}
-        onSave={handleSave}
-        onExport={handleExport}
-        onResetDesign={handleResetDesign}
-        cvData={cvData}
-        designSettings={designSettings}
-        updateCvData={updateCvData}
-        addItem={addItem}
-        removeItem={removeItem}
-        reorderItems={reorderItems}
-        addCustomSection={addCustomSection}
-        updateCustomSection={updateCustomSection}
-        removeCustomSection={removeCustomSection}
-        addCustomSectionItem={addCustomSectionItem}
-        updateCustomSectionItem={updateCustomSectionItem}
-        removeCustomSectionItem={removeCustomSectionItem}
-        reorderCustomSectionItems={reorderCustomSectionItems}
-        updateDesignSettings={updateDesignSettings}
-      />
+    <div className="flex flex-col lg:flex-row h-[calc(100dvh-4rem)] overflow-hidden">
+      {/* Mobile toggle bar */}
+      <div className="lg:hidden flex border-b border-sidebar-border bg-sidebar shrink-0">
+        <button
+          onClick={() => setMobileView('edit')}
+          className={`flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium transition-colors ${
+            mobileView === 'edit'
+              ? 'bg-sidebar-primary text-sidebar-primary-foreground'
+              : 'text-sidebar-foreground hover:bg-sidebar-accent'
+          }`}
+        >
+          <PenLine className="size-4" />
+          Upravit
+        </button>
+        <button
+          onClick={() => setMobileView('preview')}
+          className={`flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium transition-colors ${
+            mobileView === 'preview'
+              ? 'bg-sidebar-primary text-sidebar-primary-foreground'
+              : 'text-sidebar-foreground hover:bg-sidebar-accent'
+          }`}
+        >
+          <Eye className="size-4" />
+          Náhled
+        </button>
+      </div>
 
-      {/* Preview area */}
-      <div className="w-2/3 overflow-y-auto p-6 bg-gray-100 flex flex-col items-center">
-        <div 
-          id="cv-page"
-          className="w-full max-w-3xl shadow-lg min-h-[500px]"
+      {/* Sidebar - full width on mobile, 1/3 on desktop */}
+      <div className={`w-full lg:w-1/3 ${
+        mobileView === 'edit' ? 'flex-1 overflow-y-auto' : 'hidden'
+      } lg:block lg:overflow-y-auto`}>
+        <EditorSidebar
+          cvName={cvName}
+          setCVName={setCVName}
+          cvId={cvId}
+          templateSlug={templateSlug}
+          user={user}
+          profile={profile}
+          saving={saving}
+          onSave={handleSave}
+          onExport={handleExport}
+          onResetDesign={handleResetDesign}
+          cvData={cvData}
+          designSettings={designSettings}
+          updateCvData={updateCvData}
+          addItem={addItem}
+          removeItem={removeItem}
+          reorderItems={reorderItems}
+          addCustomSection={addCustomSection}
+          updateCustomSection={updateCustomSection}
+          removeCustomSection={removeCustomSection}
+          addCustomSectionItem={addCustomSectionItem}
+          updateCustomSectionItem={updateCustomSectionItem}
+          removeCustomSectionItem={removeCustomSectionItem}
+          reorderCustomSectionItems={reorderCustomSectionItems}
+          updateDesignSettings={updateDesignSettings}
+        />
+      </div>
+
+      {/* Preview area - full width on mobile, 2/3 on desktop */}
+      <div
+        ref={previewContainerRef}
+        className={`w-full lg:w-2/3 overflow-x-hidden p-4 lg:p-6 bg-gray-100 ${
+          mobileView === 'preview'
+            ? 'flex-1 flex flex-col items-center overflow-y-auto'
+            : 'hidden'
+        } lg:flex lg:flex-col lg:items-center lg:overflow-y-auto`}
+      >
+        {/* Wrapper constrains layout height to the scaled CV size */}
+        <div
           style={{
-            backgroundColor: designSettings.colors.background,
-            width: '794px',
-            minHeight: '1123px',
-            padding: '40px',
-            border: '1px solid #e5e7eb',
-            position: 'relative'
+            width: previewScale < 1 ? `${794 * previewScale}px` : '794px',
+            height: previewScale < 1 ? `${1123 * previewScale}px` : 'auto',
+            minHeight: previewScale < 1 ? undefined : '1123px',
+            position: 'relative',
           }}
         >
-          <TemplateRenderer
-            templateSlug={templateSlug}
-            data={cvData}
-            designSettings={designSettings}
-          />
+          <div
+            id="cv-page"
+            className="shadow-lg"
+            style={{
+              backgroundColor: designSettings.colors.background,
+              width: '794px',
+              minHeight: '1123px',
+              padding: '40px',
+              border: '1px solid #e5e7eb',
+              position: previewScale < 1 ? 'absolute' : 'relative',
+              top: 0,
+              left: 0,
+              transform: previewScale < 1 ? `scale(${previewScale})` : undefined,
+              transformOrigin: 'top left',
+            }}
+          >
+            <TemplateRenderer
+              templateSlug={templateSlug}
+              data={cvData}
+              designSettings={designSettings}
+            />
+          </div>
         </div>
       </div>
 
