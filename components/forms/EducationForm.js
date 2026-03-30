@@ -115,6 +115,7 @@ function SortableEducationItem({ edu, onUpdate, onRemove }) {
                 onDateChange={handleEndDateChange}
                 placeholder="Současnost"
                 allowCurrent={true}
+                normalPlaceholder={true}
               />
             </div>
           </div>

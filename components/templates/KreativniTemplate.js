@@ -36,11 +36,11 @@ export default function KreativniTemplate({ data, designSettings }) {
           <div key={item.id} className="p-5 rounded-lg shadow-sm" style={{ backgroundColor: '#ffffff' }}>
             <div className="flex justify-between flex-wrap">
               <h3 className="font-bold text-lg" style={secondaryTextStyle}>{item.title}</h3>
-              {(item.startDate || item.endDate) && (
+              {(item.startDate || item.endDate === "current" || item.endDate) && (
                 <span className="font-medium" style={secondaryTextStyle}>
                   {item.startDate && formatDate(item.startDate)}
-                  {item.startDate && item.endDate && ' - '}
-                  {item.endDate ? formatDate(item.endDate) : (item.startDate ? 'Současnost' : '')}
+                  {item.startDate && (item.endDate === "current" || item.endDate) && ' - '}
+                  {item.endDate === "current" ? 'Současnost' : item.endDate ? formatDate(item.endDate) : ''}
                 </span>
               )}
             </div>

@@ -29,11 +29,11 @@ export default function ProfesionalniTemplate({ data, designSettings }) {
         <div key={item.id} className="mb-6">
           <div className="flex justify-between items-start mb-1">
             <h3 className="font-bold text-lg" style={secondaryTextStyle}>{item.title}</h3>
-            {(item.startDate || item.endDate) && (
+            {(item.startDate || item.endDate === "current" || item.endDate) && (
               <span className="text-sm px-2 py-1 rounded" style={{ backgroundColor: colors.background, color: colors.textSecondary }}>
                 {item.startDate && formatDate(item.startDate)}
-                {item.startDate && item.endDate && ' - '}
-                {item.endDate ? formatDate(item.endDate) : (item.startDate ? 'Současnost' : '')}
+                {item.startDate && (item.endDate === "current" || item.endDate) && ' - '}
+                {item.endDate === "current" ? 'Současnost' : item.endDate ? formatDate(item.endDate) : ''}
               </span>
             )}
           </div>

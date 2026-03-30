@@ -43,9 +43,13 @@ function SortableCustomSectionItem({ item, sectionId, onUpdateItem, onRemoveItem
     onUpdateItem(sectionId, item.id, "startDate", isoDate);
   };
 
-  const handleEndDateChange = (date) => {
-    const isoDate = date ? dateToISO(date) : "";
-    onUpdateItem(sectionId, item.id, "endDate", isoDate);
+  const handleEndDateChange = (dateOrSentinel) => {
+    if (dateOrSentinel === "current") {
+      onUpdateItem(sectionId, item.id, "endDate", "current");
+    } else {
+      const isoDate = dateOrSentinel ? dateToISO(dateOrSentinel) : "";
+      onUpdateItem(sectionId, item.id, "endDate", isoDate);
+    }
   };
 
   return (
@@ -91,7 +95,7 @@ function SortableCustomSectionItem({ item, sectionId, onUpdateItem, onRemoveItem
             className="w-full p-2 text-sm border rounded bg-sidebar-accent text-sidebar-accent-foreground focus:ring-2 focus:ring-sidebar-ring focus:outline-none transition-all"
             value={item.subTitle}
             onChange={(e) => onUpdateItem(sectionId, item.id, "subTitle", e.target.value)}
-            placeholder="Podtitul"
+            placeholder="Titulek"
           />
           
           <div className="grid grid-cols-2 gap-2">
@@ -106,7 +110,8 @@ function SortableCustomSectionItem({ item, sectionId, onUpdateItem, onRemoveItem
             </div>
             <div>
               <MonthYearPicker
-                date={isoToDate(item.endDate)}
+                date={item.endDate === "current" ? undefined : isoToDate(item.endDate)}
+                isCurrent={item.endDate === "current"}
                 onDateChange={handleEndDateChange}
                 placeholder="Do"
                 allowCurrent={true}

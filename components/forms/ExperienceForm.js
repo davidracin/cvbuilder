@@ -115,6 +115,7 @@ function SortableExperienceItem({ exp, onUpdate, onRemove }) {
                 onDateChange={handleEndDateChange}
                 placeholder="Současnost"
                 allowCurrent={true}
+                normalPlaceholder={true}
               />
             </div>
           </div>

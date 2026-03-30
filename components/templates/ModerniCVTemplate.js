@@ -36,17 +36,17 @@ export default function ModerniCVTemplate({ data, designSettings }) {
             <h3 className="font-medium text-lg" style={secondaryTextStyle}>
               {item.title}
             </h3>
-            {(item.startDate || item.endDate) && (
+            {(item.startDate || item.endDate === "current" || item.endDate) && (
               <span className="text-sm" style={secondaryTextStyle}>
                 {item.startDate && formatDate(item.startDate)} 
-                {item.startDate && item.endDate && ' - '}
-                {item.endDate ? formatDate(item.endDate) : (item.startDate ? 'Současnost' : '')}
+                {item.startDate && (item.endDate === "current" || item.endDate) && ' - '}
+                {item.endDate === "current" ? 'Současnost' : item.endDate ? formatDate(item.endDate) : ''}
               </span>
             )}
           </div>
-          {item.organization && (
+          {item.subTitle && (
             <div className="font-medium" style={secondaryTextStyle}>
-              {item.organization}
+              {item.subTitle}
             </div>
           )}
           {item.description && (

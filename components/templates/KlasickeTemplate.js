@@ -32,11 +32,11 @@ export default function KlasickeTemplate({ data, designSettings }) {
             <div className="font-bold" style={secondaryTextStyle}>
               {item.title}{item.subTitle && `, ${item.subTitle}`}
             </div>
-            {(item.startDate || item.endDate) && (
+            {(item.startDate || item.endDate === "current" || item.endDate) && (
               <div className="italic" style={secondaryTextStyle}>
                 {item.startDate && formatDate(item.startDate)}
-                {item.startDate && item.endDate && ' - '}
-                {item.endDate ? formatDate(item.endDate) : (item.startDate ? 'Současnost' : '')}
+                {item.startDate && (item.endDate === "current" || item.endDate) && ' - '}
+                {item.endDate === "current" ? 'Současnost' : item.endDate ? formatDate(item.endDate) : ''}
               </div>
             )}
             {item.description && (

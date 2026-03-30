@@ -111,13 +111,13 @@ function EditorSidebar({
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="experience">
+            <AccordionItem value="education">
               <AccordionTrigger className="text-sm font-semibold">
-                Pracovní zkušenosti
+                Vzdělání
               </AccordionTrigger>
               <AccordionContent className="pt-2">
-                <ExperienceForm 
-                  items={cvData.experience}
+                <EducationForm 
+                  items={cvData.education}
                   onUpdate={updateCvData}
                   onAdd={addItem}
                   onRemove={removeItem}
@@ -126,13 +126,13 @@ function EditorSidebar({
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="education">
+            <AccordionItem value="experience">
               <AccordionTrigger className="text-sm font-semibold">
-                Vzdělání
+                Pracovní zkušenosti
               </AccordionTrigger>
               <AccordionContent className="pt-2">
-                <EducationForm 
-                  items={cvData.education}
+                <ExperienceForm 
+                  items={cvData.experience}
                   onUpdate={updateCvData}
                   onAdd={addItem}
                   onRemove={removeItem}

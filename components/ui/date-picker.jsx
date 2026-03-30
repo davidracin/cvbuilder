@@ -50,13 +50,24 @@ export function DatePicker({ date, onDateChange, placeholder = "Vyberte datum", 
   )
 }
 
-export function MonthYearPicker({ date, onDateChange, placeholder = "Vyberte měsíc", className, allowCurrent = true }) {
+export function MonthYearPicker({ date, onDateChange, placeholder = "Vyberte měsíc", className, allowCurrent = true, isCurrent = false, normalPlaceholder = false }) {
   const [isOpen, setIsOpen] = React.useState(false)
 
-  const handleClearOrCurrent = () => {
+  const handleSetCurrent = () => {
+    onDateChange("current")
+    setIsOpen(false)
+  }
+
+  const handleClear = () => {
     onDateChange(undefined)
     setIsOpen(false)
   }
+
+  const displayLabel = isCurrent
+    ? "Současnost"
+    : date
+    ? format(date, "LLLL yyyy", { locale: cs })
+    : null
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -65,12 +76,12 @@ export function MonthYearPicker({ date, onDateChange, placeholder = "Vyberte mě
           variant={"outline"}
           className={cn(
             "w-full justify-start text-left font-normal",
-            !date && "text-muted-foreground",
+            !displayLabel && !normalPlaceholder && "text-muted-foreground",
             className
           )}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {date ? format(date, "LLLL yyyy", { locale: cs }) : <span>{placeholder}</span>}
+          {displayLabel ? <span>{displayLabel}</span> : <span>{placeholder}</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
@@ -88,18 +99,28 @@ export function MonthYearPicker({ date, onDateChange, placeholder = "Vyberte mě
             startMonth={new Date(1950, 0)}
             endMonth={new Date()}
           />
-          {allowCurrent && (
-            <div className="flex gap-2 border-t p-3">
+          <div className="flex gap-2 border-t p-3">
+            {allowCurrent && (
               <Button
-                variant="outline"
+                variant={isCurrent ? "default" : "outline"}
                 size="sm"
                 className="flex-1"
-                onClick={handleClearOrCurrent}
+                onClick={handleSetCurrent}
               >
                 Současnost
               </Button>
-            </div>
-          )}
+            )}
+            {(date || isCurrent) && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className={allowCurrent ? "" : "flex-1"}
+                onClick={handleClear}
+              >
+                Vymazat
+              </Button>
+            )}
+          </div>
         </div>
       </PopoverContent>
     </Popover>

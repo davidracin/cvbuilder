@@ -275,11 +275,11 @@ export default function KreativniTemplatePDF({ data, designSettings }) {
         <View key={item.id} style={styles.itemCard}>
           <View style={styles.itemHeader}>
             <Text style={styles.itemTitle}>{item.title}</Text>
-            {(item.startDate || item.endDate) && (
+            {(item.startDate || item.endDate === "current" || item.endDate) && (
               <Text style={styles.itemDate}>
                 {item.startDate && formatDate(item.startDate)}
-                {item.startDate && item.endDate && ' - '}
-                {item.endDate ? formatDate(item.endDate) : (item.startDate ? 'Současnost' : '')}
+                {item.startDate && (item.endDate === "current" || item.endDate) && ' - '}
+                {item.endDate === "current" ? 'Současnost' : item.endDate ? formatDate(item.endDate) : ''}
               </Text>
             )}
           </View>
