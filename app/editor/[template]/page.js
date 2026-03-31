@@ -122,19 +122,14 @@ export default function EditorPage() {
 
   // Thumbnail generation
   const generateAndSaveThumbnail = useCallback(async (savedCvId) => {
-    const pageElement = document.getElementById('cv-page');
-    if (!pageElement || !savedCvId) return;
-
+    if (!savedCvId) return;
     try {
-      const { generateThumbnail } = await import('../../../lib/thumbnailService');
+      const { generateThumbnailFromId } = await import('../../../lib/thumbnailService');
       const { updateThumbnailUrl } = await import('../../../lib/firestoreCVs');
-      
-      const thumbnailBase64 = await generateThumbnail(pageElement);
-      if (thumbnailBase64) {
-        await updateThumbnailUrl(savedCvId, thumbnailBase64);
-      }
-    } catch (error) {
-      // Thumbnail failed implemetation
+      const thumbnailBase64 = await generateThumbnailFromId('cv-page');
+      if (thumbnailBase64) await updateThumbnailUrl(savedCvId, thumbnailBase64);
+    } catch {
+      // Thumbnail failed silently
     }
   }, []);
 
@@ -295,7 +290,7 @@ export default function EditorPage() {
       {/* Preview area - full width on mobile, 2/3 on desktop */}
       <div
         ref={previewContainerRef}
-        className={`w-full lg:w-2/3 overflow-x-hidden p-4 lg:p-6 bg-gray-100 ${
+        className={`w-full lg:w-2/3 overflow-x-auto lg:overflow-x-hidden p-4 lg:p-6 bg-gray-100 ${
           mobileView === 'preview'
             ? 'flex-1 flex flex-col items-center overflow-y-auto'
             : 'hidden'

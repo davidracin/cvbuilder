@@ -57,7 +57,7 @@ const createStyles = (designSettings) => {
     contactRow: {
       flexDirection: 'row',
       flexWrap: 'wrap',
-      marginTop: 12,
+      marginTop: 2,
     },
     contactItem: {
       fontSize: 10,

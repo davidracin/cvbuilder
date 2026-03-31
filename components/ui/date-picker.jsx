@@ -50,7 +50,13 @@ export function DatePicker({ date, onDateChange, placeholder = "Vyberte datum", 
   )
 }
 
-export function MonthYearPicker({ date, onDateChange, placeholder = "Vyberte měsíc", className, allowCurrent = true, isCurrent = false, normalPlaceholder = false }) {
+export function MonthYearPicker({ date, onDateChange, placeholder = "Vyberte měsíc", className, allowCurrent = true, isCurrent = false, normalPlaceholder = false, minDate, maxDate }) {
+  const buildDisabled = () => {
+    if (minDate && maxDate) return (d) => d < minDate || d > maxDate;
+    if (minDate) return (d) => d < minDate;
+    if (maxDate) return (d) => d > maxDate;
+    return undefined;
+  };
   const [isOpen, setIsOpen] = React.useState(false)
 
   const handleSetCurrent = () => {
@@ -97,7 +103,8 @@ export function MonthYearPicker({ date, onDateChange, placeholder = "Vyberte mě
             defaultMonth={date}
             captionLayout="dropdown"
             startMonth={new Date(1950, 0)}
-            endMonth={new Date()}
+            endMonth={new Date(new Date().getFullYear() + 1, 11)}
+            disabled={buildDisabled()}
           />
           <div className="flex gap-2 border-t p-3">
             {allowCurrent && (

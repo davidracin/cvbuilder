@@ -106,6 +106,7 @@ function SortableExperienceItem({ exp, onUpdate, onRemove }) {
                 onDateChange={handleStartDateChange}
                 placeholder="Měsíc/Rok"
                 allowCurrent={false}
+                maxDate={exp.endDate && exp.endDate !== "current" ? isoToDate(exp.endDate) : undefined}
               />
             </div>
             <div>
@@ -116,6 +117,7 @@ function SortableExperienceItem({ exp, onUpdate, onRemove }) {
                 placeholder="Současnost"
                 allowCurrent={true}
                 normalPlaceholder={true}
+                minDate={exp.startDate ? isoToDate(exp.startDate) : undefined}
               />
             </div>
           </div>

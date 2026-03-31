@@ -22,18 +22,21 @@ function ColorPicker({ label, value, onChange, description }) {
           )}
         </div>
         <div className="flex items-center gap-2">
-          <div 
-            className="w-10 h-10 rounded border-2 border-border cursor-pointer hover:scale-105 transition-transform"
+          {/* Color swatch with overlaid transparent input for iOS compatibility */}
+          <div
+            className="relative w-10 h-10 rounded border-2 border-border cursor-pointer hover:scale-105 transition-transform overflow-hidden"
             style={{ backgroundColor: value }}
-            onClick={() => document.getElementById(`color-${label}`).click()}
-          />
-          <input
-            id={`color-${label}`}
-            type="color"
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            className="sr-only"
-          />
+          >
+            <input
+              id={`color-${label}`}
+              type="color"
+              value={value}
+              onChange={(e) => onChange(e.target.value)}
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              style={{ border: 'none', padding: 0 }}
+              title={label}
+            />
+          </div>
           <span className="text-xs font-mono text-muted-foreground w-20">
             {value.toUpperCase()}
           </span>

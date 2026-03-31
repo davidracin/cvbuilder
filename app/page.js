@@ -8,10 +8,10 @@ export default function Home() {
   const router = useRouter();
 
   const templates = [
-    { id: 1, name: "Moderní CV", slug: "moderni", preview: "/templates/moderni-preview.webp" },
-    { id: 2, name: "Klasické CV", slug: "klasicke", preview: "/templates/klasicke-preview.webp" },
-    { id: 3, name: "Kreativní CV", slug: "kreativni", preview: "/templates/kreativni-preview.webp" },
-    { id: 4, name: "Profesionální CV", slug: "profesionalni", preview: "/templates/profesionalni-preview.webp" },
+    { id: 1, name: "Moderní CV", slug: "moderni", preview: "/templates/moderni.webp" },
+    { id: 2, name: "Klasické CV", slug: "klasicke", preview: "/templates/klasicke.webp" },
+    { id: 3, name: "Kreativní CV", slug: "kreativni", preview: "/templates/kreativni.webp" },
+    { id: 4, name: "Profesionální CV", slug: "profesionalni", preview: "/templates/profesionalni.webp" },
   ];
 
   const handleTemplateSelect = (template) => {

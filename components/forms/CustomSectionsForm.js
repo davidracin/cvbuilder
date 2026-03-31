@@ -106,6 +106,7 @@ function SortableCustomSectionItem({ item, sectionId, onUpdateItem, onRemoveItem
                 placeholder="Od"
                 allowCurrent={false}
                 className="text-sm"
+                maxDate={item.endDate && item.endDate !== "current" ? isoToDate(item.endDate) : undefined}
               />
             </div>
             <div>
@@ -116,6 +117,7 @@ function SortableCustomSectionItem({ item, sectionId, onUpdateItem, onRemoveItem
                 placeholder="Do"
                 allowCurrent={true}
                 className="text-sm"
+                minDate={item.startDate ? isoToDate(item.startDate) : undefined}
               />
             </div>
           </div>

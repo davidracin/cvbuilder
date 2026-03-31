@@ -29,7 +29,9 @@ export default function PersonalInfoForm({ data, onUpdate }) {
 
   const handlePrefixSelect = (e) => {
     const val = e.target.value;
-    if (val === "custom") {
+    if (val === "none") {
+      onUpdate("personal", "phone", "");
+    } else if (val === "custom") {
       onUpdate("personal", "phone", "+ " + localNumber);
     } else {
       onUpdate("personal", "phone", val + " " + localNumber);
@@ -44,7 +46,11 @@ export default function PersonalInfoForm({ data, onUpdate }) {
 
   const handleLocalNumber = (e) => {
     const digits = e.target.value.replace(/[^\d ]/g, "");
-    onUpdate("personal", "phone", prefix + " " + digits);
+    if (prefix) {
+      onUpdate("personal", "phone", prefix + " " + digits);
+    } else {
+      onUpdate("personal", "phone", digits);
+    }
   };
 
   return (
@@ -84,12 +90,13 @@ export default function PersonalInfoForm({ data, onUpdate }) {
       
       <div>
         <label className="block text-sm font-medium mb-1.5">Telefon</label>
-        <div className="flex gap-2">
+        <div className="space-y-2">
           <select
             value={selectValue}
             onChange={handlePrefixSelect}
-            className="p-2 border-2 rounded bg-sidebar-accent text-sidebar-accent-foreground focus:border-sidebar-ring focus:outline-none transition-all text-sm"
+            className="w-full p-2 border-2 rounded bg-sidebar-accent text-sidebar-accent-foreground focus:border-sidebar-ring focus:outline-none transition-all text-sm"
           >
+            <option value="none">— Bez předvolby —</option>
             {dialCodes.map((d) => (
               <option key={d.label} value={d.code}>{d.label}</option>
             ))}
@@ -102,18 +109,16 @@ export default function PersonalInfoForm({ data, onUpdate }) {
               onChange={handleCustomPrefix}
               placeholder="+000"
               maxLength={6}
-              className="w-20 p-2 border-2 rounded bg-sidebar-accent text-sidebar-accent-foreground focus:border-sidebar-ring focus:outline-none transition-all text-sm"
+              className="w-full p-2 border-2 rounded bg-sidebar-accent text-sidebar-accent-foreground focus:border-sidebar-ring focus:outline-none transition-all text-sm"
             />
           )}
-          {prefix !== "" && (
-            <input
-              type="tel"
-              value={localNumber}
-              onChange={handleLocalNumber}
-              placeholder="123 456 789"
-              className="flex-1 p-2 border-2 rounded bg-sidebar-accent text-sidebar-accent-foreground focus:border-sidebar-ring focus:outline-none transition-all"
-            />
-          )}
+          <input
+            type="tel"
+            value={localNumber}
+            onChange={handleLocalNumber}
+            placeholder="123 456 789"
+            className="w-full p-2 border-2 rounded bg-sidebar-accent text-sidebar-accent-foreground focus:border-sidebar-ring focus:outline-none transition-all"
+          />
         </div>
         <p className="text-xs text-muted-foreground mt-1">Formát: +420 123 456 789</p>
       </div>

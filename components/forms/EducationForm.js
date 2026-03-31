@@ -106,6 +106,7 @@ function SortableEducationItem({ edu, onUpdate, onRemove }) {
                 onDateChange={handleStartDateChange}
                 placeholder="Měsíc/Rok"
                 allowCurrent={false}
+                maxDate={edu.endDate && edu.endDate !== "current" ? isoToDate(edu.endDate) : undefined}
               />
             </div>
             <div>
@@ -116,6 +117,7 @@ function SortableEducationItem({ edu, onUpdate, onRemove }) {
                 placeholder="Současnost"
                 allowCurrent={true}
                 normalPlaceholder={true}
+                minDate={edu.startDate ? isoToDate(edu.startDate) : undefined}
               />
             </div>
           </div>
