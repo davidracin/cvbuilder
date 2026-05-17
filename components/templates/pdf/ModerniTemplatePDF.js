@@ -70,7 +70,7 @@ const createStyles = (designSettings) => {
       marginRight: 8,
     },
     section: {
-      marginBottom: spacing.section,
+      marginBottom: Math.round(spacing.section * 0.6),
     },
     sectionTitle: {
       fontSize: 14,
@@ -79,11 +79,11 @@ const createStyles = (designSettings) => {
       color: colors.primary,
       borderBottomWidth: 1,
       borderBottomColor: colors.accent,
-      paddingBottom: 4,
-      marginBottom: 12,
+      paddingBottom: 3,
+      marginBottom: 8,
     },
     itemContainer: {
-      marginBottom: 16,
+      marginBottom: 10,
     },
     itemHeader: {
       flexDirection: 'row',

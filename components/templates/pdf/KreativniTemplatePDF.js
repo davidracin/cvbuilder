@@ -133,7 +133,7 @@ const createStyles = (designSettings) => {
     header: {
       flexDirection: 'row',
       justifyContent: 'space-between',
-      marginBottom: 32,
+      marginBottom: 16,
     },
     headerLeft: {
       flex: 1,
@@ -163,30 +163,30 @@ const createStyles = (designSettings) => {
     },
     card: {
       backgroundColor: '#ffffff',
-      padding: 20,
+      padding: 12,
       borderRadius: 8,
-      marginBottom: spacing.section,
+      marginBottom: Math.round(spacing.section * 0.5),
     },
     section: {
-      marginBottom: spacing.section,
+      marginBottom: Math.round(spacing.section * 0.5),
     },
     sectionHeader: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginBottom: 16,
+      marginBottom: 8,
     },
     sectionTitle: {
-      fontSize: 14,
+      fontSize: 13,
       fontWeight: 'bold',
       fontFamily: headingFont,
       color: colors.primary,
-      marginBottom: 12,
+      marginBottom: 6,
     },
     itemCard: {
       backgroundColor: '#ffffff',
-      padding: 20,
+      padding: 10,
       borderRadius: 6,
-      marginBottom: 24,
+      marginBottom: 8,
     },
     itemHeader: {
       flexDirection: 'row',
@@ -214,7 +214,7 @@ const createStyles = (designSettings) => {
       fontSize: 10,
       color: colors.text,
       lineHeight: 1.4,
-      marginTop: 8,
+      marginTop: 4,
     },
     columnsContainer: {
       flexDirection: 'row',

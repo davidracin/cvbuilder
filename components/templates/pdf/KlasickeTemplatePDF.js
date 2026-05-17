@@ -41,7 +41,7 @@ const createStyles = (designSettings) => {
     },
     header: {
       textAlign: 'center',
-      marginBottom: 32,
+      marginBottom: 20,
     },
     name: {
       fontSize: 24,
@@ -66,7 +66,7 @@ const createStyles = (designSettings) => {
       marginVertical: 8,
     },
     section: {
-      marginBottom: spacing.section,
+      marginBottom: Math.round(spacing.section * 0.6),
     },
     sectionTitle: {
       fontSize: 14,
@@ -75,10 +75,10 @@ const createStyles = (designSettings) => {
       color: colors.primary,
       textTransform: 'uppercase',
       letterSpacing: 1,
-      marginBottom: 12,
+      marginBottom: 8,
     },
     itemContainer: {
-      marginBottom: 16,
+      marginBottom: 10,
     },
     itemTitle: {
       fontSize: 11,
